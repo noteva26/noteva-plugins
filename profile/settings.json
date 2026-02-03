@@ -1,0 +1,127 @@
+{
+  "sections": [
+    {
+      "id": "general",
+      "title": "基本设置",
+      "fields": [
+        {
+          "id": "target_slug",
+          "type": "text",
+          "label": "目标页面 Slug",
+          "default": "about",
+          "description": "个人主页的 slug，例如：about（访问 /about 时显示个人主页）"
+        }
+      ]
+    },
+    {
+      "id": "personal",
+      "title": "个人信息",
+      "fields": [
+        {
+          "id": "avatar",
+          "type": "text",
+          "label": "头像 URL",
+          "default": "",
+          "description": "头像图片的 URL 地址"
+        },
+        {
+          "id": "name",
+          "type": "text",
+          "label": "昵称",
+          "default": "Your Name",
+          "description": "显示的昵称"
+        },
+        {
+          "id": "title",
+          "type": "text",
+          "label": "职位/标签",
+          "default": "Developer",
+          "description": "职位、身份或标签"
+        },
+        {
+          "id": "bio",
+          "type": "textarea",
+          "label": "个人简介",
+          "default": "Hello, I'm a developer.",
+          "description": "个人简介，支持多行文本"
+        },
+        {
+          "id": "location",
+          "type": "text",
+          "label": "所在地",
+          "default": "",
+          "description": "所在城市或地区（可选）"
+        }
+      ]
+    },
+    {
+      "id": "social",
+      "title": "社交链接",
+      "fields": [
+        {
+          "id": "email",
+          "type": "text",
+          "label": "邮箱",
+          "default": "",
+          "description": "联系邮箱"
+        },
+        {
+          "id": "github",
+          "type": "text",
+          "label": "GitHub",
+          "default": "",
+          "description": "GitHub 用户名"
+        },
+        {
+          "id": "twitter",
+          "type": "text",
+          "label": "Twitter",
+          "default": "",
+          "description": "Twitter 用户名"
+        },
+        {
+          "id": "website",
+          "type": "text",
+          "label": "个人网站",
+          "default": "",
+          "description": "个人网站 URL"
+        },
+        {
+          "id": "linkedin",
+          "type": "text",
+          "label": "LinkedIn",
+          "default": "",
+          "description": "LinkedIn 用户名"
+        }
+      ]
+    },
+    {
+      "id": "skills",
+      "title": "技能标签",
+      "fields": [
+        {
+          "id": "skills_data",
+          "label": "技能列表",
+          "type": "array",
+          "description": "添加技能标签",
+          "default": [
+            "JavaScript",
+            "TypeScript",
+            "React",
+            "Node.js",
+            "Rust"
+          ],
+          "itemFields": [
+            { "id": "skill", "label": "技能名称", "type": "text", "placeholder": "技能名称", "required": true }
+          ]
+        },
+        {
+          "id": "show_skills",
+          "type": "switch",
+          "label": "显示技能标签",
+          "default": true
+        }
+      ]
+    }
+  ]
+}

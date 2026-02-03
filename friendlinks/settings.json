@@ -1,0 +1,96 @@
+{
+  "sections": [
+    {
+      "id": "general",
+      "title": "基本设置",
+      "fields": [
+        {
+          "id": "target_slug",
+          "type": "text",
+          "label": "目标页面 Slug",
+          "default": "friendlinks",
+          "description": "友链页面的 slug，例如：friendlinks（访问 /friendlinks 时显示友链）"
+        },
+        {
+          "id": "title",
+          "type": "text",
+          "label": "页面标题",
+          "default": "友情链接",
+          "description": "友链页面的标题"
+        },
+        {
+          "id": "description",
+          "type": "textarea",
+          "label": "页面描述",
+          "default": "欢迎交换友链！",
+          "description": "显示在友链列表上方的描述文字"
+        }
+      ]
+    },
+    {
+      "id": "links",
+      "title": "友链列表",
+      "fields": [
+        {
+          "id": "links_data",
+          "label": "友链数据",
+          "type": "array",
+          "description": "添加友情链接",
+          "default": [
+            {
+              "name": "Noteva 官网",
+              "url": "https://github.com/noteva26/noteva",
+              "logo": "",
+              "description": "轻量级博客系统",
+              "category": "推荐"
+            }
+          ],
+          "itemFields": [
+            { "id": "name", "label": "站点名称", "type": "text", "placeholder": "站点名称", "required": true },
+            { "id": "url", "label": "站点链接", "type": "text", "placeholder": "https://example.com", "required": true },
+            { "id": "logo", "label": "Logo URL", "type": "text", "placeholder": "Logo 图片 URL（可选）" },
+            { "id": "description", "label": "站点描述", "type": "text", "placeholder": "站点描述（可选）" },
+            { "id": "category", "label": "分类", "type": "text", "placeholder": "分类名称（可选）" }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "style",
+      "title": "样式设置",
+      "fields": [
+        {
+          "id": "layout",
+          "type": "select",
+          "label": "布局方式",
+          "default": "grid",
+          "options": [
+            {"value": "grid", "label": "网格布局"},
+            {"value": "list", "label": "列表布局"}
+          ]
+        },
+        {
+          "id": "columns",
+          "type": "number",
+          "label": "每行显示数量",
+          "default": 3,
+          "min": 1,
+          "max": 6,
+          "description": "仅网格布局有效"
+        },
+        {
+          "id": "show_logo",
+          "type": "switch",
+          "label": "显示 Logo",
+          "default": true
+        },
+        {
+          "id": "show_description",
+          "type": "switch",
+          "label": "显示描述",
+          "default": true
+        }
+      ]
+    }
+  ]
+}
