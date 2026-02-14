@@ -1,0 +1,16 @@
+{
+  "id": "video-embed",
+  "name": "视频嵌入",
+  "version": "1.0.1",
+  "description": "自动识别并嵌入 YouTube、Bilibili、Twitter/X 等平台的视频，无需跳转即可在文章页面直接播放",
+  "author": "Noteva Team",
+  "homepage": "https://github.com/noteva26/noteva-plugins",
+  "license": "MIT",
+  "requires": {
+    "noteva": ">=0.1.0"
+  },
+  "hooks": {
+    "frontend": ["article_render"]
+  },
+  "settings": true
+}

@@ -1,0 +1,97 @@
+{
+  "sections": [
+    {
+      "id": "platforms",
+      "title": "支持的平台",
+      "fields": [
+        {
+          "id": "enable_youtube",
+          "type": "switch",
+          "label": "启用 YouTube",
+          "default": true,
+          "description": "自动嵌入 YouTube 视频"
+        },
+        {
+          "id": "enable_bilibili",
+          "type": "switch",
+          "label": "启用 Bilibili",
+          "default": true,
+          "description": "自动嵌入 Bilibili 视频"
+        },
+        {
+          "id": "enable_twitter",
+          "type": "switch",
+          "label": "启用 Twitter/X",
+          "default": true,
+          "description": "自动嵌入 Twitter/X 视频（使用 vxTwitter API）"
+        }
+      ]
+    },
+    {
+      "id": "display",
+      "title": "显示设置",
+      "fields": [
+        {
+          "id": "video_width",
+          "type": "select",
+          "label": "视频宽度",
+          "default": "100%",
+          "options": [
+            { "value": "100%", "label": "全宽（100%）" },
+            { "value": "80%", "label": "80%" },
+            { "value": "60%", "label": "60%" }
+          ],
+          "description": "视频播放器的宽度"
+        },
+        {
+          "id": "video_height",
+          "type": "text",
+          "label": "视频高度（像素）",
+          "default": "450",
+          "description": "视频播放器的高度，单位：像素"
+        },
+        {
+          "id": "border_radius",
+          "type": "text",
+          "label": "圆角大小（像素）",
+          "default": "8",
+          "description": "视频播放器的圆角大小，单位：像素"
+        },
+        {
+          "id": "show_platform_badge",
+          "type": "switch",
+          "label": "显示平台标识",
+          "default": true,
+          "description": "在视频播放器上显示平台标识（YouTube、Bilibili 等）"
+        }
+      ]
+    },
+    {
+      "id": "advanced",
+      "title": "高级设置",
+      "fields": [
+        {
+          "id": "auto_replace_links",
+          "type": "switch",
+          "label": "自动替换链接",
+          "default": true,
+          "description": "自动将文章中的视频链接替换为播放器"
+        },
+        {
+          "id": "preserve_original_link",
+          "type": "switch",
+          "label": "保留原始链接",
+          "default": false,
+          "description": "在播放器下方显示原始链接"
+        },
+        {
+          "id": "lazy_load",
+          "type": "switch",
+          "label": "延迟加载",
+          "default": true,
+          "description": "使用延迟加载提升页面性能"
+        }
+      ]
+    }
+  ]
+}
