@@ -1,0 +1,18 @@
+{
+  "toolbar": [
+    {
+      "id": "insert-video",
+      "label": { "zh-CN": "插入视频", "zh-TW": "插入影片", "en": "Insert Video" },
+      "icon": "fa-solid fa-video",
+      "insertBefore": "[video src=\"",
+      "insertAfter": "\" /]"
+    },
+    {
+      "id": "insert-audio",
+      "label": { "zh-CN": "插入音频", "zh-TW": "插入音訊", "en": "Insert Audio" },
+      "icon": "fa-solid fa-music",
+      "insertBefore": "[audio src=\"",
+      "insertAfter": "\" /]"
+    }
+  ]
+}
