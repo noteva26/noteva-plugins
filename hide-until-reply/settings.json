@@ -2,31 +2,76 @@
   "sections": [
     {
       "id": "general",
-      "title": "基本设置",
+      "title": {
+        "zh-CN": "基本设置",
+        "en": "General",
+        "zh-TW": "基本設定"
+      },
       "fields": [
         {
           "id": "placeholder_text",
           "type": "text",
-          "label": "占位文字",
+          "label": {
+            "zh-CN": "占位文字",
+            "en": "Placeholder Text",
+            "zh-TW": "佔位文字"
+          },
           "default": "回复后可见",
-          "description": "隐藏内容的提示文字"
+          "description": {
+            "zh-CN": "隐藏内容的提示文字",
+            "en": "Hint text for hidden content",
+            "zh-TW": "隱藏內容的提示文字"
+          }
         },
         {
           "id": "require_login",
           "type": "switch",
-          "label": "需要登录",
+          "label": {
+            "zh-CN": "需要登录",
+            "en": "Require Login",
+            "zh-TW": "需要登入"
+          },
           "default": true,
-          "description": "是否需要登录才能回复"
+          "description": {
+            "zh-CN": "是否需要登录才能回复",
+            "en": "Whether login is required to reply",
+            "zh-TW": "是否需要登入才能回覆"
+          }
         },
         {
           "id": "placeholder_style",
           "type": "select",
-          "label": "占位样式",
+          "label": {
+            "zh-CN": "占位样式",
+            "en": "Placeholder Style",
+            "zh-TW": "佔位樣式"
+          },
           "default": "default",
           "options": [
-            {"value": "default", "label": "默认样式"},
-            {"value": "blur", "label": "模糊效果"},
-            {"value": "lock", "label": "锁定图标"}
+            {
+              "value": "default",
+              "label": {
+                "zh-CN": "默认样式",
+                "en": "Default",
+                "zh-TW": "預設樣式"
+              }
+            },
+            {
+              "value": "blur",
+              "label": {
+                "zh-CN": "模糊效果",
+                "en": "Blur Effect",
+                "zh-TW": "模糊效果"
+              }
+            },
+            {
+              "value": "lock",
+              "label": {
+                "zh-CN": "锁定图标",
+                "en": "Lock Icon",
+                "zh-TW": "鎖定圖示"
+              }
+            }
           ]
         }
       ]

@@ -1,16 +1,24 @@
 {
   "id": "profile",
   "name": "个人主页",
-  "version": "1.0.1",
-  "description": "在自定义页面展示个人信息、社交链接和技能标签",
+  "version": "1.1.0",
+  "description": "Display profile page with social links, bio, and skills",
   "author": "Noteva Team",
   "homepage": "https://github.com/noteva26/noteva-plugins",
   "license": "MIT",
   "requires": {
-    "noteva": ">=0.1.0"
+    "noteva": ">=0.2.0"
   },
   "hooks": {
-    "frontend": ["page_render"]
+    "frontend": [
+      "page_render"
+    ]
   },
-  "settings": true
+  "settings": true,
+  "pages": [
+    {
+      "slug": "about",
+      "title": "关于"
+    }
+  ]
 }

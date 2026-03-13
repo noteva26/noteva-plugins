@@ -1,0 +1,11 @@
+{
+  "toolbar": [
+    {
+      "id": "hide-until-reply",
+      "label": { "zh-CN": "回复可见", "zh-TW": "回覆可見", "en": "Hide Until Reply" },
+      "icon": "fa-solid fa-lock",
+      "insertBefore": "[hide-until-reply]\n",
+      "insertAfter": "\n[/hide-until-reply]"
+    }
+  ]
+}

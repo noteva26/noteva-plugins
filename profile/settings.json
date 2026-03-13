@@ -2,108 +2,208 @@
   "sections": [
     {
       "id": "general",
-      "title": "基本设置",
+      "title": {
+        "zh-CN": "基本设置",
+        "en": "General",
+        "zh-TW": "基本設定"
+      },
       "fields": [
         {
           "id": "target_slug",
           "type": "text",
-          "label": "目标页面 Slug",
+          "label": {
+            "zh-CN": "目标页面 Slug",
+            "en": "Target Page Slug",
+            "zh-TW": "目標頁面 Slug"
+          },
           "default": "about",
-          "description": "个人主页的 slug，例如：about（访问 /about 时显示个人主页）"
+          "description": {
+            "zh-CN": "个人主页的 slug，例如：about（访问 /about 时显示个人主页）",
+            "en": "Slug for the profile page, e.g. about (shows at /about)",
+            "zh-TW": "個人主頁的 slug，例如：about（存取 /about 時顯示個人主頁）"
+          }
         }
       ]
     },
     {
       "id": "personal",
-      "title": "个人信息",
+      "title": {
+        "zh-CN": "个人信息",
+        "en": "Personal Info",
+        "zh-TW": "個人資訊"
+      },
       "fields": [
         {
           "id": "avatar",
           "type": "text",
-          "label": "头像 URL",
+          "label": {
+            "zh-CN": "头像 URL",
+            "en": "Avatar URL",
+            "zh-TW": "頭像 URL"
+          },
           "default": "",
-          "description": "头像图片的 URL 地址"
+          "description": {
+            "zh-CN": "头像图片的 URL 地址",
+            "en": "URL of the avatar image",
+            "zh-TW": "頭像圖片的 URL 位址"
+          }
         },
         {
           "id": "name",
           "type": "text",
-          "label": "昵称",
+          "label": {
+            "zh-CN": "昵称",
+            "en": "Name",
+            "zh-TW": "暱稱"
+          },
           "default": "Your Name",
-          "description": "显示的昵称"
+          "description": {
+            "zh-CN": "显示的昵称",
+            "en": "Display name",
+            "zh-TW": "顯示的暱稱"
+          }
         },
         {
           "id": "title",
           "type": "text",
-          "label": "职位/标签",
+          "label": {
+            "zh-CN": "职位/标签",
+            "en": "Title / Tag",
+            "zh-TW": "職位/標籤"
+          },
           "default": "Developer",
-          "description": "职位、身份或标签"
+          "description": {
+            "zh-CN": "职位、身份或标签",
+            "en": "Job title, role, or tag",
+            "zh-TW": "職位、身份或標籤"
+          }
         },
         {
           "id": "bio",
           "type": "textarea",
-          "label": "个人简介",
+          "label": {
+            "zh-CN": "个人简介",
+            "en": "Bio",
+            "zh-TW": "個人簡介"
+          },
           "default": "Hello, I'm a developer.",
-          "description": "个人简介，支持多行文本"
+          "description": {
+            "zh-CN": "个人简介，支持多行文本",
+            "en": "Personal bio, supports multi-line text",
+            "zh-TW": "個人簡介，支援多行文字"
+          }
         },
         {
           "id": "location",
           "type": "text",
-          "label": "所在地",
+          "label": {
+            "zh-CN": "所在地",
+            "en": "Location",
+            "zh-TW": "所在地"
+          },
           "default": "",
-          "description": "所在城市或地区（可选）"
+          "description": {
+            "zh-CN": "所在城市或地区（可选）",
+            "en": "City or region (optional)",
+            "zh-TW": "所在城市或地區（可選）"
+          }
         }
       ]
     },
     {
       "id": "social",
-      "title": "社交链接",
+      "title": {
+        "zh-CN": "社交链接",
+        "en": "Social Links",
+        "zh-TW": "社交連結"
+      },
       "fields": [
         {
           "id": "email",
           "type": "text",
-          "label": "邮箱",
+          "label": {
+            "zh-CN": "邮箱",
+            "en": "Email",
+            "zh-TW": "電子郵件"
+          },
           "default": "",
-          "description": "联系邮箱"
+          "description": {
+            "zh-CN": "联系邮箱",
+            "en": "Contact email",
+            "zh-TW": "聯繫郵箱"
+          }
         },
         {
           "id": "github",
           "type": "text",
           "label": "GitHub",
           "default": "",
-          "description": "GitHub 用户名"
+          "description": {
+            "zh-CN": "GitHub 用户名",
+            "en": "GitHub username",
+            "zh-TW": "GitHub 使用者名稱"
+          }
         },
         {
           "id": "twitter",
           "type": "text",
           "label": "Twitter",
           "default": "",
-          "description": "Twitter 用户名"
+          "description": {
+            "zh-CN": "Twitter 用户名",
+            "en": "Twitter username",
+            "zh-TW": "Twitter 使用者名稱"
+          }
         },
         {
           "id": "website",
           "type": "text",
-          "label": "个人网站",
+          "label": {
+            "zh-CN": "个人网站",
+            "en": "Website",
+            "zh-TW": "個人網站"
+          },
           "default": "",
-          "description": "个人网站 URL"
+          "description": {
+            "zh-CN": "个人网站 URL",
+            "en": "Personal website URL",
+            "zh-TW": "個人網站 URL"
+          }
         },
         {
           "id": "linkedin",
           "type": "text",
           "label": "LinkedIn",
           "default": "",
-          "description": "LinkedIn 用户名"
+          "description": {
+            "zh-CN": "LinkedIn 用户名",
+            "en": "LinkedIn username",
+            "zh-TW": "LinkedIn 使用者名稱"
+          }
         }
       ]
     },
     {
       "id": "skills",
-      "title": "技能标签",
+      "title": {
+        "zh-CN": "技能标签",
+        "en": "Skills",
+        "zh-TW": "技能標籤"
+      },
       "fields": [
         {
           "id": "skills_data",
-          "label": "技能列表",
+          "label": {
+            "zh-CN": "技能列表",
+            "en": "Skills List",
+            "zh-TW": "技能列表"
+          },
           "type": "array",
-          "description": "添加技能标签",
+          "description": {
+            "zh-CN": "添加技能标签",
+            "en": "Add skill tags",
+            "zh-TW": "新增技能標籤"
+          },
           "default": [
             "JavaScript",
             "TypeScript",
@@ -112,13 +212,31 @@
             "Rust"
           ],
           "itemFields": [
-            { "id": "skill", "label": "技能名称", "type": "text", "placeholder": "技能名称", "required": true }
+            {
+              "id": "skill",
+              "label": {
+                "zh-CN": "技能名称",
+                "en": "Skill Name",
+                "zh-TW": "技能名稱"
+              },
+              "type": "text",
+              "placeholder": {
+                "zh-CN": "技能名称",
+                "en": "Skill name",
+                "zh-TW": "技能名稱"
+              },
+              "required": true
+            }
           ]
         },
         {
           "id": "show_skills",
           "type": "switch",
-          "label": "显示技能标签",
+          "label": {
+            "zh-CN": "显示技能标签",
+            "en": "Show Skills",
+            "zh-TW": "顯示技能標籤"
+          },
           "default": true
         }
       ]

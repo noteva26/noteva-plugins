@@ -2,64 +2,219 @@
   "sections": [
     {
       "id": "playlist",
-      "title": "歌单设置",
+      "title": {
+        "zh-CN": "歌单设置",
+        "en": "Playlist",
+        "zh-TW": "歌單設定"
+      },
       "fields": [
         {
           "id": "songs",
-          "label": "歌曲列表",
+          "label": {
+            "zh-CN": "歌曲列表",
+            "en": "Song List",
+            "zh-TW": "歌曲列表"
+          },
           "type": "array",
-          "description": "添加歌曲到播放列表",
+          "description": {
+            "zh-CN": "添加歌曲到播放列表",
+            "en": "Add songs to the playlist",
+            "zh-TW": "新增歌曲到播放列表"
+          },
           "default": [],
           "itemFields": [
-            { "id": "name", "label": "歌曲名称", "type": "text", "placeholder": "歌曲名称" },
-            { "id": "artist", "label": "歌手", "type": "text", "placeholder": "歌手" },
-            { "id": "cover", "label": "封面URL", "type": "text", "placeholder": "封面 URL" },
-            { "id": "url", "label": "音频URL", "type": "text", "placeholder": "音频 URL (必填)", "required": true }
+            {
+              "id": "name",
+              "label": {
+                "zh-CN": "歌曲名称",
+                "en": "Song Name",
+                "zh-TW": "歌曲名稱"
+              },
+              "type": "text",
+              "placeholder": {
+                "zh-CN": "歌曲名称",
+                "en": "Song name",
+                "zh-TW": "歌曲名稱"
+              }
+            },
+            {
+              "id": "artist",
+              "label": {
+                "zh-CN": "歌手",
+                "en": "Artist",
+                "zh-TW": "歌手"
+              },
+              "type": "text",
+              "placeholder": {
+                "zh-CN": "歌手",
+                "en": "Artist",
+                "zh-TW": "歌手"
+              }
+            },
+            {
+              "id": "cover",
+              "label": {
+                "zh-CN": "封面URL",
+                "en": "Cover URL",
+                "zh-TW": "封面URL"
+              },
+              "type": "text",
+              "placeholder": {
+                "zh-CN": "封面 URL",
+                "en": "Cover URL",
+                "zh-TW": "封面 URL"
+              }
+            },
+            {
+              "id": "url",
+              "label": {
+                "zh-CN": "音频URL",
+                "en": "Audio URL",
+                "zh-TW": "音訊URL"
+              },
+              "type": "text",
+              "placeholder": {
+                "zh-CN": "音频 URL (必填)",
+                "en": "Audio URL (required)",
+                "zh-TW": "音訊 URL (必填)"
+              },
+              "required": true
+            }
           ]
         }
       ]
     },
     {
       "id": "playback",
-      "title": "播放设置",
+      "title": {
+        "zh-CN": "播放设置",
+        "en": "Playback",
+        "zh-TW": "播放設定"
+      },
       "fields": [
         {
           "id": "autoplay",
-          "label": "自动播放",
+          "label": {
+            "zh-CN": "自动播放",
+            "en": "Autoplay",
+            "zh-TW": "自動播放"
+          },
           "type": "switch",
-          "description": "页面加载后自动播放（可能被浏览器阻止）",
+          "description": {
+            "zh-CN": "页面加载后自动播放（可能被浏览器阻止）",
+            "en": "Auto-play on page load (may be blocked by browser)",
+            "zh-TW": "頁面載入後自動播放（可能被瀏覽器阻止）"
+          },
           "default": false
         },
         {
           "id": "loop",
-          "label": "循环播放",
+          "label": {
+            "zh-CN": "循环播放",
+            "en": "Loop",
+            "zh-TW": "循環播放"
+          },
           "type": "switch",
-          "description": "播放完所有歌曲后从头开始",
+          "description": {
+            "zh-CN": "播放完所有歌曲后从头开始",
+            "en": "Restart from beginning after all songs finish",
+            "zh-TW": "播放完所有歌曲後從頭開始"
+          },
           "default": true
         },
         {
+          "id": "shuffle",
+          "label": {
+            "zh-CN": "随机播放",
+            "en": "Shuffle",
+            "zh-TW": "隨機播放"
+          },
+          "type": "switch",
+          "description": {
+            "zh-CN": "随机顺序播放歌曲",
+            "en": "Play songs in random order",
+            "zh-TW": "隨機順序播放歌曲"
+          },
+          "default": false
+        },
+        {
           "id": "volume",
-          "label": "默认音量",
+          "label": {
+            "zh-CN": "默认音量",
+            "en": "Default Volume",
+            "zh-TW": "預設音量"
+          },
           "type": "number",
           "min": 0,
           "max": 100,
           "default": 50
+        },
+        {
+          "id": "remember",
+          "label": {
+            "zh-CN": "记住播放状态",
+            "en": "Remember State",
+            "zh-TW": "記住播放狀態"
+          },
+          "type": "switch",
+          "description": {
+            "zh-CN": "记住播放进度、音量和当前歌曲",
+            "en": "Remember playback progress, volume, and current song",
+            "zh-TW": "記住播放進度、音量和目前歌曲"
+          },
+          "default": true
         }
       ]
     },
     {
       "id": "appearance",
-      "title": "外观设置",
+      "title": {
+        "zh-CN": "外观设置",
+        "en": "Appearance",
+        "zh-TW": "外觀設定"
+      },
       "fields": [
         {
           "id": "position",
-          "label": "播放器位置",
+          "label": {
+            "zh-CN": "播放器位置",
+            "en": "Player Position",
+            "zh-TW": "播放器位置"
+          },
           "type": "select",
           "options": [
-            { "value": "bottom-right", "label": "右下角" },
-            { "value": "bottom-left", "label": "左下角" },
-            { "value": "top-right", "label": "右上角" },
-            { "value": "top-left", "label": "左上角" }
+            {
+              "value": "bottom-right",
+              "label": {
+                "zh-CN": "右下角",
+                "en": "Bottom Right",
+                "zh-TW": "右下角"
+              }
+            },
+            {
+              "value": "bottom-left",
+              "label": {
+                "zh-CN": "左下角",
+                "en": "Bottom Left",
+                "zh-TW": "左下角"
+              }
+            },
+            {
+              "value": "top-right",
+              "label": {
+                "zh-CN": "右上角",
+                "en": "Top Right",
+                "zh-TW": "右上角"
+              }
+            },
+            {
+              "value": "top-left",
+              "label": {
+                "zh-CN": "左上角",
+                "en": "Top Left",
+                "zh-TW": "左上角"
+              }
+            }
           ],
           "default": "bottom-right"
         }

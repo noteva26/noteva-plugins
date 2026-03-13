@@ -1,9 +1,10 @@
-/* 回复可见插件样式 */
+/* Hide Until Reply Plugin v1.1.0 */
 
+/* ========= Locked placeholder ========= */
 .hide-until-reply {
   position: relative;
-  margin: 1rem 0;
-  border-radius: 8px;
+  margin: 1.25em 0;
+  border-radius: 12px;
   overflow: hidden;
 }
 
@@ -11,32 +12,140 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 8px;
-  padding: 24px;
-  background: linear-gradient(135deg, #f5f7fa 0%, #e4e8ec 100%);
-  color: #666;
+  padding: 0;
+}
+
+.hur-placeholder {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  padding: 32px 24px;
+  width: 100%;
+  background: linear-gradient(135deg, #f8f9fb 0%, #eef1f5 100%);
+  border: 1px dashed rgba(0, 0, 0, 0.12);
+  border-radius: 12px;
+  text-align: center;
+}
+
+.hur-placeholder-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: rgba(139, 92, 246, 0.1);
+  color: #8b5cf6;
+}
+
+.hur-placeholder-text {
   font-size: 14px;
+  font-weight: 500;
+  color: #374151;
 }
 
-.hide-until-reply-placeholder .icon {
-  font-size: 20px;
+.hur-placeholder-hint {
+  font-size: 12px;
+  color: #9ca3af;
 }
 
-.hide-until-reply.unlocked .hide-until-reply-content {
-  padding: 16px;
-  background: #f0fdf4;
-  border-left: 4px solid #22c55e;
+/* Unlocking animation */
+.noteva-hidden-content.hur-unlocking {
+  animation: hur-fadeOut 0.3s ease forwards;
 }
 
-/* 深色模式 */
-@media (prefers-color-scheme: dark) {
-  .hide-until-reply-placeholder {
-    background: linear-gradient(135deg, #1f2937 0%, #374151 100%);
-    color: #9ca3af;
+@keyframes hur-fadeOut {
+  to {
+    opacity: 0;
+    transform: scale(0.98);
   }
-  
-  .hide-until-reply.unlocked .hide-until-reply-content {
-    background: #064e3b;
-    border-left-color: #10b981;
+}
+
+/* ========= Revealed content ========= */
+.hur-revealed {
+  margin: 1.25em 0;
+  border-radius: 12px;
+  overflow: hidden;
+  border: 1px solid rgba(34, 197, 94, 0.2);
+  background: rgba(240, 253, 244, 0.6);
+  opacity: 0;
+  transform: translateY(4px);
+  transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.hur-revealed.show {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.hur-revealed-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 16px;
+  background: rgba(34, 197, 94, 0.08);
+  border-bottom: 1px solid rgba(34, 197, 94, 0.12);
+  color: #16a34a;
+  font-size: 13px;
+  font-weight: 500;
+}
+
+.hur-revealed-icon {
+  display: flex;
+  color: #22c55e;
+}
+
+.hur-revealed-content {
+  padding: 16px;
+}
+
+/* ========= Dark mode ========= */
+.dark .hur-placeholder {
+  background: linear-gradient(135deg, rgba(30, 30, 40, 0.8) 0%, rgba(40, 40, 55, 0.8) 100%);
+  border-color: rgba(255, 255, 255, 0.08);
+}
+
+.dark .hur-placeholder-icon {
+  background: rgba(139, 92, 246, 0.15);
+}
+
+.dark .hur-placeholder-text {
+  color: #e2e2e2;
+}
+
+.dark .hur-placeholder-hint {
+  color: rgba(255, 255, 255, 0.4);
+}
+
+.dark .hur-revealed {
+  background: rgba(6, 78, 59, 0.3);
+  border-color: rgba(16, 185, 129, 0.2);
+}
+
+.dark .hur-revealed-header {
+  background: rgba(16, 185, 129, 0.1);
+  border-bottom-color: rgba(16, 185, 129, 0.15);
+  color: #34d399;
+}
+
+.dark .hur-revealed-icon {
+  color: #10b981;
+}
+
+.dark .hur-revealed-content {
+  color: #d1d5db;
+}
+
+/* ========= Mobile ========= */
+@media (max-width: 640px) {
+  .hur-placeholder {
+    padding: 24px 16px;
+    gap: 8px;
+  }
+
+  .hur-placeholder-icon {
+    width: 38px;
+    height: 38px;
   }
 }

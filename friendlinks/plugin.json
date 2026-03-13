@@ -1,16 +1,24 @@
 {
   "id": "friendlinks",
   "name": "友情链接",
-  "version": "1.0.1",
-  "description": "在自定义页面展示友情链接，支持分类和自定义样式",
+  "version": "1.1.0",
+  "description": "Display friend links on a custom page with categories and polished card UI",
   "author": "Noteva Team",
   "homepage": "https://github.com/noteva26/noteva-plugins",
   "license": "MIT",
   "requires": {
-    "noteva": ">=0.1.0"
+    "noteva": ">=0.2.0"
   },
   "hooks": {
-    "frontend": ["page_render"]
+    "frontend": [
+      "page_render"
+    ]
   },
-  "settings": true
+  "settings": true,
+  "pages": [
+    {
+      "slug": "friendlinks",
+      "title": "友情链接"
+    }
+  ]
 }

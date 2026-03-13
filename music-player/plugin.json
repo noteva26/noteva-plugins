@@ -1,16 +1,20 @@
 {
   "id": "music-player",
   "name": "音乐播放器",
-  "version": "3.0.1",
-  "description": "紧凑条状音乐播放器，支持歌单播放",
+  "version": "3.1.0",
+  "description": "Premium floating music player with playlist support",
   "author": "Noteva Team",
   "homepage": "https://github.com/noteva26/noteva-plugins",
   "license": "MIT",
   "requires": {
-    "noteva": ">=0.0.8"
+    "noteva": ">=0.2.0"
   },
   "hooks": {
-    "frontend": ["body_end", "init"]
+    "frontend": [
+      "body_end",
+      "init",
+      "content_render"
+    ]
   },
   "shortcodes": [],
   "permissions": [],

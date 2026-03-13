@@ -1,236 +1,290 @@
-/* 音乐播放器插件样式 v3.0 - 紧凑条状风格 */
+/* Music Player Plugin v3.1.0 — Premium floating player */
 
+/* ========= Layout & Position ========= */
 #noteva-music-player {
   position: fixed;
   z-index: 9999;
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  padding: 8px 14px;
-  background: rgba(24, 24, 28, 0.95);
-  border-radius: 50px;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
-  backdrop-filter: blur(16px);
-  transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  max-width: 360px;
+  transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 
-/* 收起状态 - 仅显示唱片 */
-#noteva-music-player.collapsed {
-  padding: 6px;
-  gap: 0;
-  max-width: 52px;
-  border-radius: 50%;
+#noteva-music-player.nmp-pos-bottom-right {
+  bottom: 20px;
+  right: 20px;
+}
+
+#noteva-music-player.nmp-pos-bottom-left {
+  bottom: 20px;
+  left: 20px;
+}
+
+#noteva-music-player.nmp-pos-top-right {
+  top: 20px;
+  right: 20px;
+}
+
+#noteva-music-player.nmp-pos-top-left {
+  top: 20px;
+  left: 20px;
+}
+
+/* ========= Collapsed state — floating disc with progress ring ========= */
+.nmp-collapsed-ring {
+  position: relative;
+  width: 48px;
+  height: 48px;
   cursor: pointer;
-}
-
-#noteva-music-player.collapsed .player-info,
-#noteva-music-player.collapsed .player-controls,
-#noteva-music-player.collapsed .player-volume,
-#noteva-music-player.collapsed .btn-playlist,
-#noteva-music-player.collapsed .playlist-panel,
-#noteva-music-player.collapsed .player-progress {
+  flex-shrink: 0;
   display: none;
 }
 
-#noteva-music-player.collapsed .player-disc {
-  width: 40px;
-  height: 40px;
+#noteva-music-player.collapsed .nmp-collapsed-ring {
+  display: block;
 }
 
-#noteva-music-player.collapsed .disc-cover {
-  width: 18px;
-  height: 18px;
+#noteva-music-player.collapsed .nmp-body,
+#noteva-music-player.collapsed .nmp-playlist {
+  display: none;
 }
 
-/* 位置 */
-#noteva-music-player.position-bottom-right { bottom: 20px; right: 20px; }
-#noteva-music-player.position-bottom-left { bottom: 20px; left: 20px; }
-#noteva-music-player.position-top-right { top: 20px; right: 20px; }
-#noteva-music-player.position-top-left { top: 20px; left: 20px; }
+.nmp-collapsed-ring svg {
+  position: absolute;
+  top: 0;
+  left: 0;
+}
 
-/* 黑胶唱片 - 小尺寸 */
-.player-disc {
-  width: 40px;
-  height: 40px;
+.nmp-ring-bg {
+  stroke: rgba(255, 255, 255, 0.12);
+}
+
+.nmp-ring-fill {
+  stroke: #8b5cf6;
+  transition: stroke-dashoffset 0.3s linear;
+  stroke-linecap: round;
+}
+
+.nmp-collapsed-cover {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 36px;
+  height: 36px;
   border-radius: 50%;
-  background: 
-    radial-gradient(circle at 50% 50%, #333 0%, #333 30%, #1a1a1a 31%, #222 60%, #1a1a1a 100%);
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
+  object-fit: cover;
+}
+
+#noteva-music-player.playing .nmp-collapsed-cover {
+  animation: nmp-spin 8s linear infinite;
+}
+
+@keyframes nmp-spin {
+  to {
+    transform: translate(-50%, -50%) rotate(360deg);
+  }
+}
+
+/* ========= Expanded body ========= */
+.nmp-body {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 16px 16px;
+  background: rgba(24, 24, 28, 0.82);
+  border-radius: 16px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.28);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  max-width: 380px;
   position: relative;
+  overflow: visible;
+}
+
+/* Cover */
+.nmp-cover {
+  width: 44px;
+  height: 44px;
+  border-radius: 8px;
+  object-fit: cover;
   flex-shrink: 0;
-  cursor: pointer;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
   transition: transform 0.3s;
 }
 
-.player-disc:hover {
-  transform: scale(1.05);
+#noteva-music-player.playing .nmp-cover {
+  animation: nmp-pulse 2s ease-in-out infinite;
 }
 
-.disc-cover {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  width: 18px;
-  height: 18px;
-  border-radius: 50%;
-  object-fit: cover;
-  border: 2px solid #444;
+@keyframes nmp-pulse {
+
+  0%,
+  100% {
+    transform: scale(1);
+  }
+
+  50% {
+    transform: scale(1.03);
+  }
 }
 
-.disc-center {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  width: 6px;
-  height: 6px;
-  border-radius: 50%;
-  background: #555;
-  z-index: 2;
-}
-
-/* 播放时旋转 */
-#noteva-music-player.playing .player-disc {
-  animation: spin 4s linear infinite;
-}
-
-@keyframes spin {
-  from { transform: rotate(0deg); }
-  to { transform: rotate(360deg); }
-}
-
-#noteva-music-player.playing .player-disc:hover {
-  animation-play-state: paused;
-}
-
-/* 歌曲信息 */
-.player-info {
+/* Song info */
+.nmp-info {
   flex: 1;
   min-width: 0;
-  cursor: pointer;
+  cursor: default;
 }
 
-.song-title {
+.nmp-title {
   font-size: 13px;
+  font-weight: 500;
   color: #fff;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-  line-height: 1.3;
+  line-height: 1.4;
 }
 
-.song-title .artist {
+.nmp-artist {
+  font-size: 11px;
   color: rgba(255, 255, 255, 0.5);
-  font-weight: normal;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
-/* 进度条 - 细线 */
-.player-progress {
+/* ========= Controls ========= */
+.nmp-controls {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+}
+
+.nmp-btn {
+  background: none;
+  border: none;
+  color: rgba(255, 255, 255, 0.65);
+  cursor: pointer;
+  padding: 6px;
+  border-radius: 50%;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 30px;
+  height: 30px;
+  flex-shrink: 0;
+}
+
+.nmp-btn:hover {
+  color: #fff;
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.nmp-btn-play {
+  background: rgba(139, 92, 246, 0.9) !important;
+  color: #fff !important;
+  width: 34px;
+  height: 34px;
+}
+
+.nmp-btn-play:hover {
+  background: rgba(139, 92, 246, 1) !important;
+  transform: scale(1.06);
+}
+
+/* Shuffle active */
+.nmp-btn-shuffle.active {
+  color: #8b5cf6;
+  background: rgba(139, 92, 246, 0.15);
+}
+
+.nmp-btn-shuffle {
+  transition: all 0.2s ease, transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.nmp-btn-shuffle:active {
+  transform: scale(0.85);
+}
+
+/* Actions */
+.nmp-actions {
+  display: flex;
+  align-items: center;
+  gap: 0;
+}
+
+/* ========= Progress bar ========= */
+.nmp-progress {
   position: absolute;
   bottom: 0;
-  left: 14px;
-  right: 14px;
-  height: 3px;
-  background: rgba(255, 255, 255, 0.1);
-  border-radius: 0 0 4px 4px;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: rgba(255, 255, 255, 0.08);
+  cursor: pointer;
+  transition: height 0.2s;
+  border-radius: 0 0 16px 16px;
   overflow: hidden;
 }
 
-.progress-fill {
+.nmp-progress:hover {
+  height: 6px;
+}
+
+.nmp-progress-fill {
   height: 100%;
-  background: linear-gradient(90deg, #6366f1, #8b5cf6);
+  background: linear-gradient(90deg, #8b5cf6, #a78bfa);
   width: 0%;
-  transition: width 0.1s linear;
+  transition: width 0.15s linear;
+  border-radius: 0 3px 3px 0;
 }
 
-/* 控制按钮 */
-.player-controls {
-  display: flex;
-  align-items: center;
-  gap: 4px;
-}
-
-.player-controls button {
-  background: none;
-  border: none;
-  color: rgba(255, 255, 255, 0.7);
-  cursor: pointer;
-  font-size: 14px;
-  padding: 6px;
+.nmp-progress-thumb {
+  position: absolute;
+  top: 50%;
+  left: 0%;
+  transform: translate(-50%, -50%) scale(0);
+  width: 12px;
+  height: 12px;
+  background: #fff;
   border-radius: 50%;
-  transition: all 0.2s;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 28px;
-  height: 28px;
+  box-shadow: 0 0 4px rgba(0, 0, 0, 0.3);
+  transition: transform 0.15s ease;
+  pointer-events: none;
 }
 
-.player-controls button:hover {
-  color: #fff;
-  background: rgba(255, 255, 255, 0.1);
+.nmp-progress:hover .nmp-progress-thumb {
+  transform: translate(-50%, -50%) scale(1);
 }
 
-.player-controls .btn-play {
-  background: rgba(99, 102, 241, 0.9);
-  color: #fff;
-  width: 32px;
-  height: 32px;
-  font-size: 12px;
-}
-
-.player-controls .btn-play:hover {
-  background: rgba(99, 102, 241, 1);
-}
-
-/* 音量控制 */
-.player-volume {
+/* ========= Volume ========= */
+.nmp-volume-wrap {
   position: relative;
 }
 
-.btn-volume {
-  background: none;
-  border: none;
-  color: rgba(255, 255, 255, 0.7);
-  cursor: pointer;
-  font-size: 14px;
-  padding: 6px;
-  border-radius: 50%;
-  transition: all 0.2s;
-  width: 28px;
-  height: 28px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.btn-volume:hover {
-  color: #fff;
-  background: rgba(255, 255, 255, 0.1);
-}
-
-.volume-slider {
+.nmp-volume-popup {
   position: absolute;
-  bottom: 100%;
+  bottom: calc(100% + 8px);
   left: 50%;
-  transform: translateX(-50%);
+  transform: translateX(-50%) scale(0.9);
   background: rgba(24, 24, 28, 0.95);
-  border-radius: 8px;
-  padding: 12px 8px;
-  margin-bottom: 8px;
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
+  border-radius: 10px;
+  padding: 14px 10px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
   border: 1px solid rgba(255, 255, 255, 0.08);
-  display: none;
+  opacity: 0;
+  pointer-events: none;
+  transition: all 0.2s ease;
+  backdrop-filter: blur(16px);
 }
 
-.volume-slider.show {
-  display: block;
+.nmp-volume-popup.show {
+  opacity: 1;
+  pointer-events: auto;
+  transform: translateX(-50%) scale(1);
 }
 
-.volume-bar {
+.nmp-volume-bar {
   width: 4px;
   height: 80px;
   -webkit-appearance: slider-vertical;
@@ -241,90 +295,143 @@
   outline: none;
 }
 
-/* 歌单按钮 */
-.btn-playlist {
-  background: none;
-  border: none;
-  color: rgba(255, 255, 255, 0.7);
-  cursor: pointer;
-  font-size: 14px;
-  padding: 6px;
-  border-radius: 50%;
-  transition: all 0.2s;
-  width: 28px;
-  height: 28px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.btn-playlist:hover {
-  color: #fff;
-  background: rgba(255, 255, 255, 0.1);
-}
-
-/* 歌单面板 */
-.playlist-panel {
+/* ========= Playlist panel ========= */
+.nmp-playlist {
   position: absolute;
-  bottom: 100%;
+  bottom: calc(100% + 8px);
   right: 0;
-  width: 280px;
-  max-height: 300px;
-  background: rgba(24, 24, 28, 0.98);
-  border-radius: 12px;
-  margin-bottom: 10px;
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+  width: 300px;
+  max-height: 320px;
+  background: rgba(24, 24, 28, 0.96);
+  border-radius: 14px;
+  box-shadow: 0 8px 40px rgba(0, 0, 0, 0.35);
   border: 1px solid rgba(255, 255, 255, 0.08);
   overflow: hidden;
   display: none;
+  backdrop-filter: blur(20px);
+  animation: nmp-slideUp 0.25s ease;
 }
 
-.playlist-panel.show {
+@keyframes nmp-slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.nmp-playlist.show {
   display: block;
 }
 
-.playlist-header {
-  padding: 12px 16px;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+.nmp-playlist-header {
+  padding: 14px 18px 10px;
   font-size: 13px;
+  font-weight: 500;
   color: rgba(255, 255, 255, 0.6);
 }
 
-.playlist-list {
-  max-height: 250px;
-  overflow-y: auto;
+.nmp-playlist-count {
+  color: rgba(255, 255, 255, 0.3);
+  font-weight: 400;
 }
 
-.playlist-item {
+.nmp-playlist-list {
+  max-height: 265px;
+  overflow-y: auto;
+  padding-bottom: 6px;
+}
+
+.nmp-pl-item {
   display: flex;
   align-items: center;
   gap: 10px;
-  padding: 10px 16px;
+  padding: 8px 18px;
   cursor: pointer;
-  transition: background 0.2s;
+  transition: background 0.15s;
 }
 
-.playlist-item:hover {
+.nmp-pl-item:hover {
   background: rgba(255, 255, 255, 0.05);
 }
 
-.playlist-item.active {
-  background: rgba(99, 102, 241, 0.15);
+.nmp-pl-item.active {
+  background: rgba(139, 92, 246, 0.12);
 }
 
-.playlist-item-cover {
+.nmp-pl-indicator {
+  width: 20px;
+  font-size: 11px;
+  color: rgba(255, 255, 255, 0.35);
+  text-align: center;
+  flex-shrink: 0;
+}
+
+.nmp-pl-item.active .nmp-pl-indicator {
+  color: #8b5cf6;
+}
+
+/* Wave animation */
+.nmp-wave {
+  display: inline-flex;
+  align-items: flex-end;
+  gap: 2px;
+  height: 14px;
+}
+
+.nmp-wave i {
+  display: block;
+  width: 2px;
+  background: #8b5cf6;
+  border-radius: 1px;
+  animation: nmp-wave 0.8s ease-in-out infinite;
+}
+
+.nmp-wave i:nth-child(1) {
+  height: 6px;
+  animation-delay: 0s;
+}
+
+.nmp-wave i:nth-child(2) {
+  height: 10px;
+  animation-delay: 0.15s;
+}
+
+.nmp-wave i:nth-child(3) {
+  height: 4px;
+  animation-delay: 0.3s;
+}
+
+@keyframes nmp-wave {
+
+  0%,
+  100% {
+    transform: scaleY(0.5);
+  }
+
+  50% {
+    transform: scaleY(1.2);
+  }
+}
+
+.nmp-pl-cover {
   width: 36px;
   height: 36px;
-  border-radius: 4px;
+  border-radius: 6px;
   object-fit: cover;
+  flex-shrink: 0;
 }
 
-.playlist-item-info {
+.nmp-pl-info {
   flex: 1;
   min-width: 0;
 }
 
-.playlist-item-name {
+.nmp-pl-name {
   font-size: 13px;
   color: #fff;
   white-space: nowrap;
@@ -332,142 +439,135 @@
   text-overflow: ellipsis;
 }
 
-.playlist-item-artist {
+.nmp-pl-artist {
   font-size: 11px;
-  color: rgba(255, 255, 255, 0.5);
+  color: rgba(255, 255, 255, 0.45);
 }
 
-.playlist-item.active .playlist-item-name {
-  color: #8b5cf6;
+.nmp-pl-item.active .nmp-pl-name {
+  color: #a78bfa;
 }
 
-/* 浅色模式 */
-@media (prefers-color-scheme: light) {
-  #noteva-music-player {
-    background: rgba(255, 255, 255, 0.95);
-    border: 1px solid rgba(0, 0, 0, 0.08);
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
-  }
-  
-  .song-title {
-    color: #1a1a2e;
-  }
-  
-  .song-title .artist {
-    color: rgba(26, 26, 46, 0.5);
-  }
-  
-  .player-progress {
-    background: rgba(0, 0, 0, 0.08);
-  }
-  
-  .player-controls button,
-  .btn-volume,
-  .btn-playlist {
-    color: rgba(26, 26, 46, 0.6);
-  }
-  
-  .player-controls button:hover,
-  .btn-volume:hover,
-  .btn-playlist:hover {
-    color: #1a1a2e;
-    background: rgba(0, 0, 0, 0.05);
-  }
-  
-  .volume-slider,
-  .playlist-panel {
-    background: rgba(255, 255, 255, 0.98);
-    border: 1px solid rgba(0, 0, 0, 0.08);
-  }
-  
-  .playlist-header {
-    color: rgba(26, 26, 46, 0.6);
-    border-bottom-color: rgba(0, 0, 0, 0.08);
-  }
-  
-  .playlist-item:hover {
-    background: rgba(0, 0, 0, 0.03);
-  }
-  
-  .playlist-item-name {
-    color: #1a1a2e;
-  }
-  
-  .playlist-item-artist {
-    color: rgba(26, 26, 46, 0.5);
-  }
+/* ========= Light mode (theme .dark class) ========= */
+#noteva-music-player:not(.nmp-dark) .nmp-body {
+  background: rgba(255, 255, 255, 0.88);
+  border: 1px solid rgba(0, 0, 0, 0.06);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
 }
 
-/* 移动端 */
+#noteva-music-player:not(.nmp-dark) .nmp-title {
+  color: #1a1a2e;
+}
+
+#noteva-music-player:not(.nmp-dark) .nmp-artist {
+  color: rgba(26, 26, 46, 0.5);
+}
+
+#noteva-music-player:not(.nmp-dark) .nmp-btn {
+  color: rgba(26, 26, 46, 0.55);
+}
+
+#noteva-music-player:not(.nmp-dark) .nmp-btn:hover {
+  color: #1a1a2e;
+  background: rgba(0, 0, 0, 0.06);
+}
+
+#noteva-music-player:not(.nmp-dark) .nmp-btn-play {
+  color: #fff !important;
+}
+
+#noteva-music-player:not(.nmp-dark) .nmp-progress {
+  background: rgba(0, 0, 0, 0.06);
+}
+
+#noteva-music-player:not(.nmp-dark) .nmp-ring-bg {
+  stroke: rgba(0, 0, 0, 0.1);
+}
+
+#noteva-music-player:not(.nmp-dark) .nmp-volume-popup,
+#noteva-music-player:not(.nmp-dark) .nmp-playlist {
+  background: rgba(255, 255, 255, 0.96);
+  border: 1px solid rgba(0, 0, 0, 0.06);
+}
+
+#noteva-music-player:not(.nmp-dark) .nmp-playlist-header {
+  color: rgba(26, 26, 46, 0.5);
+}
+
+#noteva-music-player:not(.nmp-dark) .nmp-pl-item:hover {
+  background: rgba(0, 0, 0, 0.03);
+}
+
+#noteva-music-player:not(.nmp-dark) .nmp-pl-name {
+  color: #1a1a2e;
+}
+
+#noteva-music-player:not(.nmp-dark) .nmp-pl-artist {
+  color: rgba(26, 26, 46, 0.45);
+}
+
+/* ========= Mobile ========= */
 @media (max-width: 640px) {
-  #noteva-music-player {
+  .nmp-body {
     max-width: calc(100vw - 40px);
-    padding: 6px 12px;
+    padding: 8px 12px 14px;
     gap: 10px;
   }
-  
-  #noteva-music-player.position-bottom-right,
-  #noteva-music-player.position-bottom-left {
+
+  #noteva-music-player.nmp-pos-bottom-right,
+  #noteva-music-player.nmp-pos-bottom-left {
     bottom: 12px;
   }
-  
-  #noteva-music-player.position-bottom-right { right: 12px; }
-  #noteva-music-player.position-bottom-left { left: 12px; }
-  
-  .player-disc {
-    width: 36px;
-    height: 36px;
+
+  #noteva-music-player.nmp-pos-bottom-right {
+    right: 12px;
   }
-  
-  .disc-cover {
-    width: 16px;
-    height: 16px;
+
+  #noteva-music-player.nmp-pos-bottom-left {
+    left: 12px;
   }
-  
-  .song-title {
+
+  .nmp-cover {
+    width: 38px;
+    height: 38px;
+  }
+
+  .nmp-title {
     font-size: 12px;
   }
-  
-  .player-controls button {
-    width: 26px;
-    height: 26px;
-    font-size: 12px;
+
+  .nmp-btn {
+    width: 28px;
+    height: 28px;
   }
-  
-  .player-controls .btn-play {
-    width: 30px;
-    height: 30px;
+
+  .nmp-btn-play {
+    width: 32px;
+    height: 32px;
   }
-  
-  .btn-volume,
-  .btn-playlist {
-    width: 26px;
-    height: 26px;
-    font-size: 12px;
-  }
-  
-  .playlist-panel {
-    width: calc(100vw - 40px);
+
+  .nmp-playlist {
+    width: calc(100vw - 32px);
     right: auto;
     left: 50%;
     transform: translateX(-50%);
   }
 }
 
-/* 滚动条样式 */
-.playlist-list::-webkit-scrollbar {
+/* ========= Scrollbar ========= */
+.nmp-playlist-list::-webkit-scrollbar {
   width: 4px;
 }
 
-.playlist-list::-webkit-scrollbar-track {
+.nmp-playlist-list::-webkit-scrollbar-track {
   background: transparent;
 }
 
-.playlist-list::-webkit-scrollbar-thumb {
-  background: rgba(255, 255, 255, 0.2);
+.nmp-playlist-list::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.15);
   border-radius: 2px;
 }
 
-.playlist-list::-webkit-scrollbar-thumb:hover {
-  background: rgba(255, 255, 255, 0.3);
+.nmp-playlist-list::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.25);
 }

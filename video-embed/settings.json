@@ -2,94 +2,199 @@
   "sections": [
     {
       "id": "platforms",
-      "title": "支持的平台",
+      "title": {
+        "zh-CN": "支持的平台",
+        "en": "Supported Platforms",
+        "zh-TW": "支援的平台"
+      },
       "fields": [
         {
           "id": "enable_youtube",
           "type": "switch",
-          "label": "启用 YouTube",
+          "label": {
+            "zh-CN": "启用 YouTube",
+            "en": "Enable YouTube",
+            "zh-TW": "啟用 YouTube"
+          },
           "default": true,
-          "description": "自动嵌入 YouTube 视频"
+          "description": {
+            "zh-CN": "自动嵌入 YouTube 视频",
+            "en": "Auto-embed YouTube videos",
+            "zh-TW": "自動嵌入 YouTube 影片"
+          }
         },
         {
           "id": "enable_bilibili",
           "type": "switch",
-          "label": "启用 Bilibili",
+          "label": {
+            "zh-CN": "启用 Bilibili",
+            "en": "Enable Bilibili",
+            "zh-TW": "啟用 Bilibili"
+          },
           "default": true,
-          "description": "自动嵌入 Bilibili 视频"
+          "description": {
+            "zh-CN": "自动嵌入 Bilibili 视频",
+            "en": "Auto-embed Bilibili videos",
+            "zh-TW": "自動嵌入 Bilibili 影片"
+          }
         },
         {
           "id": "enable_twitter",
           "type": "switch",
-          "label": "启用 Twitter/X",
+          "label": {
+            "zh-CN": "启用 Twitter/X",
+            "en": "Enable Twitter/X",
+            "zh-TW": "啟用 Twitter/X"
+          },
           "default": true,
-          "description": "自动嵌入 Twitter/X 视频（使用 vxTwitter API）"
+          "description": {
+            "zh-CN": "自动嵌入 Twitter/X 视频（使用 vxTwitter API）",
+            "en": "Auto-embed Twitter/X videos (via vxTwitter API)",
+            "zh-TW": "自動嵌入 Twitter/X 影片（使用 vxTwitter API）"
+          }
         }
       ]
     },
     {
       "id": "display",
-      "title": "显示设置",
+      "title": {
+        "zh-CN": "显示设置",
+        "en": "Display",
+        "zh-TW": "顯示設定"
+      },
       "fields": [
         {
           "id": "video_width",
           "type": "select",
-          "label": "视频宽度",
+          "label": {
+            "zh-CN": "视频宽度",
+            "en": "Video Width",
+            "zh-TW": "影片寬度"
+          },
           "default": "100%",
           "options": [
-            { "value": "100%", "label": "全宽（100%）" },
-            { "value": "80%", "label": "80%" },
-            { "value": "60%", "label": "60%" }
+            {
+              "value": "100%",
+              "label": {
+                "zh-CN": "全宽（100%）",
+                "en": "Full Width (100%)",
+                "zh-TW": "全寬（100%）"
+              }
+            },
+            {
+              "value": "80%",
+              "label": "80%"
+            },
+            {
+              "value": "60%",
+              "label": "60%"
+            }
           ],
-          "description": "视频播放器的宽度"
+          "description": {
+            "zh-CN": "视频播放器的宽度",
+            "en": "Width of the video player",
+            "zh-TW": "影片播放器的寬度"
+          }
         },
         {
           "id": "video_height",
           "type": "text",
-          "label": "视频高度（像素）",
+          "label": {
+            "zh-CN": "视频高度（像素）",
+            "en": "Video Height (px)",
+            "zh-TW": "影片高度（像素）"
+          },
           "default": "450",
-          "description": "视频播放器的高度，单位：像素"
+          "description": {
+            "zh-CN": "视频播放器的高度，单位：像素",
+            "en": "Height of the video player in pixels",
+            "zh-TW": "影片播放器的高度，單位：像素"
+          }
         },
         {
           "id": "border_radius",
           "type": "text",
-          "label": "圆角大小（像素）",
+          "label": {
+            "zh-CN": "圆角大小（像素）",
+            "en": "Border Radius (px)",
+            "zh-TW": "圓角大小（像素）"
+          },
           "default": "8",
-          "description": "视频播放器的圆角大小，单位：像素"
+          "description": {
+            "zh-CN": "视频播放器的圆角大小，单位：像素",
+            "en": "Border radius of the video player in pixels",
+            "zh-TW": "影片播放器的圓角大小，單位：像素"
+          }
         },
         {
           "id": "show_platform_badge",
           "type": "switch",
-          "label": "显示平台标识",
+          "label": {
+            "zh-CN": "显示平台标识",
+            "en": "Show Platform Badge",
+            "zh-TW": "顯示平台標識"
+          },
           "default": true,
-          "description": "在视频播放器上显示平台标识（YouTube、Bilibili 等）"
+          "description": {
+            "zh-CN": "在视频播放器上显示平台标识（YouTube、Bilibili 等）",
+            "en": "Show platform badge on the video player (YouTube, Bilibili, etc.)",
+            "zh-TW": "在影片播放器上顯示平台標識（YouTube、Bilibili 等）"
+          }
         }
       ]
     },
     {
       "id": "advanced",
-      "title": "高级设置",
+      "title": {
+        "zh-CN": "高级设置",
+        "en": "Advanced",
+        "zh-TW": "進階設定"
+      },
       "fields": [
         {
           "id": "auto_replace_links",
           "type": "switch",
-          "label": "自动替换链接",
+          "label": {
+            "zh-CN": "自动替换链接",
+            "en": "Auto Replace Links",
+            "zh-TW": "自動替換連結"
+          },
           "default": true,
-          "description": "自动将文章中的视频链接替换为播放器"
+          "description": {
+            "zh-CN": "自动将文章中的视频链接替换为播放器",
+            "en": "Automatically replace video links with embedded players",
+            "zh-TW": "自動將文章中的影片連結替換為播放器"
+          }
         },
         {
           "id": "preserve_original_link",
           "type": "switch",
-          "label": "保留原始链接",
+          "label": {
+            "zh-CN": "保留原始链接",
+            "en": "Preserve Original Link",
+            "zh-TW": "保留原始連結"
+          },
           "default": false,
-          "description": "在播放器下方显示原始链接"
+          "description": {
+            "zh-CN": "在播放器下方显示原始链接",
+            "en": "Show original link below the player",
+            "zh-TW": "在播放器下方顯示原始連結"
+          }
         },
         {
           "id": "lazy_load",
           "type": "switch",
-          "label": "延迟加载",
+          "label": {
+            "zh-CN": "延迟加载",
+            "en": "Lazy Load",
+            "zh-TW": "延遲載入"
+          },
           "default": true,
-          "description": "使用延迟加载提升页面性能"
+          "description": {
+            "zh-CN": "使用延迟加载提升页面性能",
+            "en": "Use lazy loading for better performance",
+            "zh-TW": "使用延遲載入提升頁面效能"
+          }
         }
       ]
     }

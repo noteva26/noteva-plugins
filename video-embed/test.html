@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Video Embed Plugin Test</title>
+  <link rel="stylesheet" href="frontend.css">
+</head>
+<body>
+  <div style="max-width: 800px; margin: 50px auto; padding: 20px;">
+    <h1>Video Embed Plugin 测试页面</h1>
+    
+    <article>
+      <div class="post-content">
+        <h2>测试视频嵌入</h2>
+        
+        <h3>YouTube 视频</h3>
+        <p><a href="https://www.youtube.com/watch?v=dQw4w9WgXcQ">https://www.youtube.com/watch?v=dQw4w9WgXcQ</a></p>
+        
+        <h3>Bilibili 视频</h3>
+        <p><a href="https://www.bilibili.com/video/BV1EdBeB4EUt/?spm_id_from=333.337.search-card.all.click">https://www.bilibili.com/video/BV1EdBeB4EUt/?spm_id_from=333.337.search-card.all.click</a></p>
+        
+        <h3>Twitter 视频</h3>
+        <p><a href="https://twitter.com/Twitter/status/1577730467436138524">https://twitter.com/Twitter/status/1577730467436138524</a></p>
+      </div>
+    </article>
+  </div>
+  
+  <script>
+    // 模拟插件设置
+    window.mockPluginSettings = {
+      enable_youtube: true,
+      enable_bilibili: true,
+      enable_twitter: true,
+      video_width: '100%',
+      video_height: '450',
+      border_radius: '8',
+      show_platform_badge: true,
+      auto_replace_links: true,
+      preserve_original_link: false,
+      lazy_load: true
+    };
+  </script>
+  <script src="frontend.js"></script>
+  
+  <script>
+    // 覆盖 loadSettings 函数以使用模拟数据
+    setTimeout(() => {
+      console.log('Test page loaded');
+      console.log('Links found:', document.querySelectorAll('.post-content a').length);
+    }, 1000);
+  </script>
+</body>
+</html>

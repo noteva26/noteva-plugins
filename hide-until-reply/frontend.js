@@ -1,142 +1,160 @@
 /**
- * 回复可见插件
- * 隐藏部分内容，用户回复后才能查看
+ * 回复可见插件 v1.1.0
+ * Hides content behind reply gate with polished locked/unlocked UI
  */
-(function() {
+(function () {
   const PLUGIN_ID = 'hide-until-reply';
   let isProcessing = false;
-  
-  // 等待 Noteva SDK 加载
-  function waitForNoteva(callback) {
-    if (typeof Noteva !== 'undefined') {
-      callback();
-    } else {
-      setTimeout(() => waitForNoteva(callback), 100);
-    }
+
+  // i18n
+  const I18N = {
+    'zh-CN': { locked: '回复后可见', unlocked: '内容已解锁！', login: '请先登录', reply: '回复文章即可查看隐藏内容' },
+    'zh-TW': { locked: '回覆後可見', unlocked: '內容已解鎖！', login: '請先登入', reply: '回覆文章即可查看隱藏內容' },
+    'en': { locked: 'Reply to view', unlocked: 'Content unlocked!', login: 'Please log in first', reply: 'Reply to this post to reveal hidden content' },
+  };
+
+  function getLocale() {
+    // Theme stores locale in localStorage via Zustand
+    try {
+      const stored = JSON.parse(localStorage.getItem('noteva-locale') || '{}');
+      if (stored.state?.locale) return stored.state.locale;
+    } catch (e) { }
+    if (typeof Noteva !== 'undefined' && Noteva.i18n) return Noteva.i18n.getLocale();
+    return 'zh-CN';
   }
-  
-  waitForNoteva(function() {
-    // 检查用户是否已回复该文章
+
+  function t(key) {
+    const locale = getLocale();
+    const lang = locale.split('-')[0];
+    const msgs = I18N[locale] || I18N[lang] || I18N['zh-CN'];
+    return msgs[key] || key;
+  }
+
+  // SVG icons
+  const ICON_LOCK = '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>';
+  const ICON_UNLOCK = '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 9.9-1"/></svg>';
+
+  function waitForNoteva(callback) {
+    if (typeof Noteva !== 'undefined') callback();
+    else setTimeout(() => waitForNoteva(callback), 100);
+  }
+
+  waitForNoteva(function () {
     async function checkUnlocked(articleId) {
-      // 先确保用户状态已检查
       const currentUser = await Noteva.user.check();
-      
-      if (!currentUser) {
-        return false;
-      }
-      
+      if (!currentUser) return false;
+
       try {
-        // 获取文章评论，检查当前用户是否有评论
         const comments = await Noteva.api.get(`/comments/${articleId}`);
-        
         if (!comments.comments) return false;
-        
-        // 递归检查评论（包括回复）
-        function hasUserComment(commentList) {
-          for (const c of commentList) {
+
+        function hasUserComment(list) {
+          for (const c of list) {
             if (c.user_id === currentUser.id) return true;
             if (c.replies && hasUserComment(c.replies)) return true;
           }
           return false;
         }
-        
         return hasUserComment(comments.comments);
       } catch (e) {
-        console.log('[hide-until-reply] Check error:', e);
         return false;
       }
     }
-    
-    // 解锁隐藏内容
+
     function unlockContent(articleId) {
       const elements = document.querySelectorAll(`.noteva-hidden-content[data-article-id="${articleId}"]`);
       elements.forEach(el => {
         const template = el.querySelector('.noteva-hidden-template');
-        
-        if (template) {
+        if (!template) return;
+
+        // Add unlock animation
+        el.classList.add('hur-unlocking');
+
+        setTimeout(() => {
           const revealed = document.createElement('div');
-          revealed.className = 'noteva-revealed-content';
-          revealed.innerHTML = template.innerHTML;
+          revealed.className = 'hur-revealed';
+          revealed.innerHTML = `
+            <div class="hur-revealed-header">
+              <span class="hur-revealed-icon">${ICON_UNLOCK}</span>
+              <span class="hur-revealed-label">${t('unlocked')}</span>
+            </div>
+            <div class="hur-revealed-content">${template.innerHTML}</div>
+          `;
           el.parentNode.replaceChild(revealed, el);
-        }
+
+          // Trigger entrance animation
+          requestAnimationFrame(() => revealed.classList.add('show'));
+        }, 300);
       });
     }
 
-    // 初始化：查找页面上的隐藏内容并检查是否需要解锁
     async function initHiddenContent() {
       if (isProcessing) return;
-      
+
       const hiddenElements = document.querySelectorAll('.noteva-hidden-content[data-article-id]');
       if (hiddenElements.length === 0) return;
-      
+
       isProcessing = true;
-      console.log('[hide-until-reply] Found', hiddenElements.length, 'hidden elements');
-      
+
+      // Enhance placeholder UI
+      hiddenElements.forEach(el => {
+        if (el.dataset.hurInit) return;
+        el.dataset.hurInit = 'true';
+
+        const placeholder = el.querySelector('.hide-until-reply-placeholder');
+        if (placeholder && !placeholder.querySelector('.hur-placeholder')) {
+          const settings = Noteva.plugins.getSettings(PLUGIN_ID);
+          const text = settings.placeholder_text || t('locked');
+
+          placeholder.innerHTML = `
+            <div class="hur-placeholder">
+              <div class="hur-placeholder-icon">${ICON_LOCK}</div>
+              <div class="hur-placeholder-text">${text}</div>
+              <div class="hur-placeholder-hint">${t('reply')}</div>
+            </div>
+          `;
+        }
+      });
+
       for (const el of hiddenElements) {
         const articleId = parseInt(el.dataset.articleId, 10);
         if (articleId) {
           const unlocked = await checkUnlocked(articleId);
-          console.log('[hide-until-reply] Article', articleId, 'unlocked:', unlocked);
-          if (unlocked) {
-            unlockContent(articleId);
-          }
+          if (unlocked) unlockContent(articleId);
         }
       }
-      
+
       isProcessing = false;
     }
-    
-    // 监听评论创建事件
+
+    // Listen for comment creation
     Noteva.hooks.on('comment_after_create', async (data) => {
-      const articleId = data.articleId;
-      if (articleId) {
+      if (data.articleId) {
         setTimeout(() => {
-          unlockContent(articleId);
-          Noteva.ui.toast('内容已解锁！', 'success');
+          unlockContent(data.articleId);
+          if (Noteva.ui && Noteva.ui.toast) {
+            Noteva.ui.toast(t('unlocked'), 'success');
+          }
         }, 500);
       }
     });
-    
-    // 监听内容渲染事件
-    Noteva.hooks.on('content_render', () => {
-      setTimeout(initHiddenContent, 100);
-    });
-    
-    // 使用 MutationObserver 监听 DOM 变化
+
+    Noteva.hooks.on('content_render', () => setTimeout(initHiddenContent, 100));
+
+    // MutationObserver fallback
     function startObserver() {
-      if (!document.body) {
-        // body 还没准备好，等一下再试
-        setTimeout(startObserver, 100);
-        return;
-      }
-      
-      const observer = new MutationObserver((mutations) => {
-        for (const mutation of mutations) {
-          if (mutation.type === 'childList') {
-            // 检查是否有新的隐藏内容元素
-            const hasHiddenContent = document.querySelector('.noteva-hidden-content[data-article-id]');
-            if (hasHiddenContent) {
-              setTimeout(initHiddenContent, 100);
-              break;
-            }
-          }
+      if (!document.body) { setTimeout(startObserver, 100); return; }
+      const observer = new MutationObserver(() => {
+        if (document.querySelector('.noteva-hidden-content[data-article-id]:not([data-hur-init])')) {
+          setTimeout(initHiddenContent, 100);
         }
       });
-      
-      // 开始监听
-      observer.observe(document.body, {
-        childList: true,
-        subtree: true
-      });
+      observer.observe(document.body, { childList: true, subtree: true });
     }
-    
     startObserver();
-    
-    // 页面加载时初始化
+
     Noteva.ready(() => {
-      // 延迟执行，等待 React 渲染完成
       setTimeout(initHiddenContent, 500);
-      // 再次检查，以防第一次太早
       setTimeout(initHiddenContent, 1500);
     });
   });

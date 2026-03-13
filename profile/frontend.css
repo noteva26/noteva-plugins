@@ -1,231 +1,228 @@
-/* 个人主页容器 */
-.profile-container {
+/* Profile Plugin v1.1.0 */
+
+.pf-container {
   max-width: 800px;
   margin: 0 auto;
   padding: 3rem 1rem;
 }
 
-/* 头部区域 */
-.profile-header {
+/* Header */
+.pf-header {
   display: flex;
   align-items: center;
   gap: 2rem;
   margin-bottom: 2rem;
   padding-bottom: 2rem;
-  border-bottom: 2px solid #e5e7eb;
+  border-bottom: 1px solid var(--border, #e5e7eb);
 }
 
-.profile-avatar {
+.pf-avatar {
   flex-shrink: 0;
-  width: 120px;
-  height: 120px;
+  width: 110px;
+  height: 110px;
   border-radius: 50%;
   overflow: hidden;
-  border: 4px solid #3b82f6;
-  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.2);
+  border: 3px solid #8b5cf6;
+  box-shadow: 0 4px 20px rgba(139, 92, 246, 0.2);
+  transition: transform 0.3s;
 }
 
-.profile-avatar img {
+.pf-avatar:hover {
+  transform: scale(1.05);
+}
+
+.pf-avatar img {
   width: 100%;
   height: 100%;
   object-fit: cover;
 }
 
-.profile-info {
+.pf-info {
   flex: 1;
 }
 
-.profile-name {
-  font-size: 2rem;
-  font-weight: bold;
-  margin: 0 0 0.5rem 0;
-  color: #111827;
+.pf-name {
+  font-size: 1.75rem;
+  font-weight: 700;
+  margin: 0 0 6px;
+  color: var(--foreground, #111827);
 }
 
-.profile-title {
-  font-size: 1.25rem;
-  color: #3b82f6;
-  margin: 0 0 0.5rem 0;
+.pf-title {
+  font-size: 1.1rem;
+  color: #8b5cf6;
+  margin: 0 0 6px;
   font-weight: 500;
 }
 
-.profile-location {
-  font-size: 1rem;
-  color: #6b7280;
+.pf-location {
+  font-size: 0.9rem;
+  color: var(--muted-foreground, #6b7280);
   margin: 0;
-}
-
-/* 个人简介 */
-.profile-bio {
-  margin-bottom: 2rem;
-  padding: 1.5rem;
-  background: #f9fafb;
-  border-radius: 8px;
-  border-left: 4px solid #3b82f6;
-}
-
-.profile-bio p {
-  font-size: 1.125rem;
-  line-height: 1.75;
-  color: #374151;
-  margin: 0;
-}
-
-/* 社交链接 */
-.profile-social {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 1rem;
-  margin-bottom: 2rem;
-}
-
-.social-link {
   display: flex;
   align-items: center;
-  gap: 0.5rem;
-  padding: 0.75rem 1.25rem;
-  background: #fff;
-  border: 2px solid #e5e7eb;
-  border-radius: 8px;
-  text-decoration: none;
-  color: #374151;
-  font-weight: 500;
-  transition: all 0.3s ease;
+  gap: 4px;
 }
 
-.social-link:hover {
-  border-color: #3b82f6;
-  background: #eff6ff;
-  transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.15);
+/* Bio */
+.pf-bio {
+  margin-bottom: 2rem;
+  padding: 20px 24px;
+  background: var(--card, #f9fafb);
+  border-radius: 14px;
+  border-left: 4px solid #8b5cf6;
 }
 
-.social-icon {
-  font-size: 1.25rem;
-}
-
-.social-label {
+.pf-bio p {
   font-size: 1rem;
+  line-height: 1.8;
+  color: var(--foreground, #374151);
+  margin: 0;
 }
 
-/* 技能标签 */
-.profile-skills {
+/* Social */
+.pf-social {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-bottom: 2rem;
+}
+
+.pf-social-link {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 18px;
+  background: var(--card, #fff);
+  border: 1px solid var(--border, #e5e7eb);
+  border-radius: 10px;
+  text-decoration: none;
+  color: var(--foreground, #374151);
+  font-weight: 500;
+  font-size: 14px;
+  transition: all 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.pf-social-link:hover {
+  border-color: #8b5cf6;
+  background: rgba(139, 92, 246, 0.06);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(139, 92, 246, 0.12);
+}
+
+.pf-social-icon {
+  display: flex;
+  color: var(--muted-foreground, #6b7280);
+}
+
+.pf-social-link:hover .pf-social-icon {
+  color: #8b5cf6;
+}
+
+/* Skills */
+.pf-skills {
   margin-top: 2rem;
 }
 
-.skills-title {
-  font-size: 1.5rem;
+.pf-skills-title {
+  font-size: 1.25rem;
   font-weight: 600;
   margin-bottom: 1rem;
-  color: #111827;
+  color: var(--foreground, #111827);
 }
 
-.skills-tags {
+.pf-skills-tags {
   display: flex;
   flex-wrap: wrap;
-  gap: 0.75rem;
+  gap: 10px;
 }
 
-.skill-tag {
-  display: inline-block;
-  padding: 0.5rem 1rem;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+.pf-skill {
+  padding: 6px 16px;
+  background: linear-gradient(135deg, #8b5cf6, #7c3aed);
   color: #fff;
   border-radius: 20px;
-  font-size: 0.875rem;
+  font-size: 13px;
   font-weight: 500;
-  transition: transform 0.2s ease;
+  transition: transform 0.2s, box-shadow 0.2s;
 }
 
-.skill-tag:hover {
-  transform: scale(1.05);
+.pf-skill:hover {
+  transform: scale(1.06);
+  box-shadow: 0 2px 10px rgba(139, 92, 246, 0.3);
 }
 
-/* 暗色模式 */
-@media (prefers-color-scheme: dark) {
-  .profile-header {
-    border-bottom-color: #374151;
-  }
-  
-  .profile-name {
-    color: #f9fafb;
-  }
-  
-  .profile-title {
-    color: #60a5fa;
-  }
-  
-  .profile-location {
-    color: #9ca3af;
-  }
-  
-  .profile-bio {
-    background: #1f2937;
-    border-left-color: #60a5fa;
-  }
-  
-  .profile-bio p {
-    color: #d1d5db;
-  }
-  
-  .social-link {
-    background: #1f2937;
-    border-color: #374151;
-    color: #d1d5db;
-  }
-  
-  .social-link:hover {
-    border-color: #60a5fa;
-    background: #1e3a8a;
-  }
-  
-  .skills-title {
-    color: #f9fafb;
-  }
+/* Dark */
+.dark .pf-header {
+  border-bottom-color: var(--border, rgba(255, 255, 255, 0.08));
 }
 
-/* 响应式 */
+.dark .pf-name {
+  color: var(--foreground, #f9fafb);
+}
+
+.dark .pf-title {
+  color: #a78bfa;
+}
+
+.dark .pf-bio {
+  background: var(--card, rgba(30, 30, 36, 0.8));
+  border-left-color: #a78bfa;
+}
+
+.dark .pf-bio p {
+  color: var(--foreground, #d1d5db);
+}
+
+.dark .pf-social-link {
+  background: var(--card, rgba(30, 30, 36, 0.8));
+  border-color: var(--border, rgba(255, 255, 255, 0.08));
+  color: var(--foreground, #d1d5db);
+}
+
+.dark .pf-social-link:hover {
+  border-color: #8b5cf6;
+  background: rgba(139, 92, 246, 0.1);
+}
+
+.dark .pf-skills-title {
+  color: var(--foreground, #f9fafb);
+}
+
+/* Responsive */
 @media (max-width: 768px) {
-  .profile-container {
+  .pf-container {
     padding: 2rem 1rem;
   }
-  
-  .profile-header {
+
+  .pf-header {
     flex-direction: column;
     text-align: center;
     gap: 1rem;
   }
-  
-  .profile-avatar {
-    width: 100px;
-    height: 100px;
-  }
-  
-  .profile-name {
-    font-size: 1.5rem;
-  }
-  
-  .profile-title {
-    font-size: 1.125rem;
-  }
-  
-  .profile-bio {
-    padding: 1rem;
-  }
-  
-  .profile-bio p {
-    font-size: 1rem;
-  }
-  
-  .profile-social {
+
+  .pf-location {
     justify-content: center;
   }
-  
-  .social-link {
-    padding: 0.625rem 1rem;
+
+  .pf-avatar {
+    width: 90px;
+    height: 90px;
   }
-  
-  .skills-tags {
+
+  .pf-name {
+    font-size: 1.5rem;
+  }
+
+  .pf-bio {
+    padding: 16px 18px;
+  }
+
+  .pf-social {
+    justify-content: center;
+  }
+
+  .pf-skills-tags {
     justify-content: center;
   }
 }

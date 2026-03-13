@@ -1,406 +1,239 @@
-(function() {
+/**
+ * 视频嵌入插件 v1.1.0
+ * Auto-embed YouTube, Bilibili, Twitter/X videos from URLs
+ */
+(function () {
   'use strict';
-  
+
   const PLUGIN_ID = 'video-embed';
-  
-  // 默认设置
+
+  // i18n
+  const I18N = {
+    'zh-CN': { loading: '正在加载视频…', error: '无法加载视频', viewOriginal: '查看原始链接', unsupported: '您的浏览器不支持视频播放' },
+    'zh-TW': { loading: '正在載入影片…', error: '無法載入影片', viewOriginal: '查看原始連結', unsupported: '您的瀏覽器不支援影片播放' },
+    'en': { loading: 'Loading video…', error: 'Failed to load video', viewOriginal: 'View original link', unsupported: 'Your browser does not support video playback' },
+  };
+
+  function getLocale() {
+    try {
+      const stored = JSON.parse(localStorage.getItem('noteva-locale') || '{}');
+      if (stored.state?.locale) return stored.state.locale;
+    } catch (e) { }
+    if (typeof Noteva !== 'undefined' && Noteva.i18n) return Noteva.i18n.getLocale();
+    return 'zh-CN';
+  }
+
+  function t(key) {
+    const locale = getLocale();
+    const lang = locale.split('-')[0];
+    const msgs = I18N[locale] || I18N[lang] || I18N['zh-CN'];
+    return msgs[key] || key;
+  }
+
+  // SVG platform icons
+  const PLATFORM_ICONS = {
+    youtube: '<svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M23.5 6.2a3 3 0 00-2.1-2.1C19.5 3.5 12 3.5 12 3.5s-7.5 0-9.4.6A3 3 0 00.5 6.2 31.5 31.5 0 000 12a31.5 31.5 0 00.5 5.8 3 3 0 002.1 2.1c1.9.6 9.4.6 9.4.6s7.5 0 9.4-.6a3 3 0 002.1-2.1c.4-1.9.5-5.8.5-5.8s0-3.9-.5-5.8zM9.5 15.6V8.4l6.3 3.6-6.3 3.6z"/></svg>',
+    bilibili: '<svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M17.8 2.8L16 5H8L6.2 2.8a1 1 0 00-1.5 1.4L6.3 6H4a3 3 0 00-3 3v9a3 3 0 003 3h16a3 3 0 003-3V9a3 3 0 00-3-3h-2.3l1.6-1.8a1 1 0 10-1.5-1.4zM9 11a1 1 0 110 4 1 1 0 010-4zm6 0a1 1 0 110 4 1 1 0 010-4z"/></svg>',
+    twitter: '<svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>',
+  };
+
   const DEFAULT_SETTINGS = {
     enable_youtube: true,
     enable_bilibili: true,
     enable_twitter: true,
     video_width: '100%',
     video_height: '450',
-    border_radius: '8',
+    border_radius: '12',
     show_platform_badge: true,
     auto_replace_links: true,
     preserve_original_link: false,
-    lazy_load: true
+    lazy_load: true,
   };
-  
+
   let settings = { ...DEFAULT_SETTINGS };
-  
-  // 视频平台配置
+
   const platforms = {
     youtube: {
       name: 'YouTube',
-      icon: '▶️',
+      color: '#FF0000',
       regex: /(?:https?:\/\/)?(?:www\.)?(?:youtube\.com\/(?:watch\?v=|embed\/|v\/)|youtu\.be\/)([a-zA-Z0-9_-]{11})/i,
-      getEmbedUrl: (videoId) => `https://www.youtube.com/embed/${videoId}`,
-      enabled: () => settings.enable_youtube
+      getEmbedUrl: (id) => `https://www.youtube.com/embed/${id}`,
+      enabled: () => settings.enable_youtube,
     },
     bilibili: {
       name: 'Bilibili',
-      icon: '📺',
+      color: '#00A1D6',
       regex: /(?:https?:\/\/)?(?:www\.)?bilibili\.com\/video\/((?:BV|av)[a-zA-Z0-9]+)/i,
-      getEmbedUrl: (videoId) => {
-        if (videoId.startsWith('av')) {
-          return `//player.bilibili.com/player.html?aid=${videoId.substring(2)}`;
-        }
-        return `//player.bilibili.com/player.html?bvid=${videoId}`;
-      },
-      enabled: () => settings.enable_bilibili
+      getEmbedUrl: (id) => id.startsWith('av')
+        ? `//player.bilibili.com/player.html?aid=${id.substring(2)}`
+        : `//player.bilibili.com/player.html?bvid=${id}`,
+      enabled: () => settings.enable_bilibili,
     },
     twitter: {
-      name: 'Twitter/X',
-      icon: '🐦',
+      name: 'X',
+      color: '#000',
       regex: /(?:https?:\/\/)?(?:www\.)?(?:twitter\.com|x\.com)\/\w+\/status\/(\d+)/i,
-      getEmbedUrl: null, // Twitter 需要特殊处理
-      enabled: () => settings.enable_twitter
-    }
+      getEmbedUrl: null,
+      enabled: () => settings.enable_twitter,
+    },
   };
-  
-  // 创建视频播放器 HTML
+
   function createVideoPlayer(platform, videoId, originalUrl) {
-    const width = settings.video_width;
-    const height = settings.video_height;
-    const borderRadius = settings.border_radius;
-    const showBadge = settings.show_platform_badge;
-    const preserveLink = settings.preserve_original_link;
-    const lazyLoad = settings.lazy_load;
-    
-    const platformConfig = platforms[platform];
-    
-    let playerHtml = `
-      <div class="video-embed-container" data-platform="${platform}">
-        ${showBadge ? `
-          <div class="video-embed-badge">
-            <span class="badge-icon">${platformConfig.icon}</span>
-            <span class="badge-text">${platformConfig.name}</span>
-          </div>
-        ` : ''}
-        <div class="video-embed-wrapper" style="width: ${width}; max-width: 100%;">
-    `;
-    
+    const { video_width: width, video_height: height, border_radius: radius, show_platform_badge: showBadge, preserve_original_link: preserveLink, lazy_load: lazyLoad } = settings;
+    const cfg = platforms[platform];
+
+    let html = `<div class="ve-container" data-platform="${platform}">`;
+
+    if (showBadge) {
+      html += `<div class="ve-badge" style="--ve-badge-color: ${cfg.color}">
+        <span class="ve-badge-icon">${PLATFORM_ICONS[platform] || ''}</span>
+        <span class="ve-badge-text">${cfg.name}</span>
+      </div>`;
+    }
+
+    html += `<div class="ve-wrapper" style="width: ${width}; max-width: 100%;">`;
+
     if (platform === 'twitter') {
-      // Twitter 视频需要异步加载
-      playerHtml += `
-          <div class="video-embed-loading" data-tweet-id="${videoId}">
-            <div class="loading-spinner"></div>
-            <p>正在加载视频...</p>
-          </div>
-      `;
+      html += `<div class="ve-loading" data-tweet-id="${videoId}">
+        <div class="ve-spinner"></div>
+        <p>${t('loading')}</p>
+      </div>`;
     } else {
-      // YouTube 和 Bilibili 使用 iframe
-      const embedUrl = platformConfig.getEmbedUrl(videoId);
-      const iframeAttrs = lazyLoad ? 'loading="lazy"' : '';
-      
-      playerHtml += `
-          <div class="video-embed-player" style="border-radius: ${borderRadius}px; overflow: hidden;">
-            <iframe
-              src="${embedUrl}"
-              width="100%"
-              height="${height}"
-              frameborder="0"
-              allowfullscreen
-              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-              ${iframeAttrs}
-            ></iframe>
-          </div>
-      `;
+      const embedUrl = cfg.getEmbedUrl(videoId);
+      html += `<div class="ve-player" style="border-radius: ${radius}px;">
+        <iframe src="${embedUrl}" width="100%" height="${height}" frameborder="0" allowfullscreen
+          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+          ${lazyLoad ? 'loading="lazy"' : ''}></iframe>
+      </div>`;
     }
-    
+
     if (preserveLink) {
-      playerHtml += `
-          <div class="video-embed-link">
-            <a href="${originalUrl}" target="_blank" rel="noopener noreferrer">
-              🔗 查看原始链接
-            </a>
-          </div>
-      `;
+      html += `<div class="ve-link">
+        <a href="${originalUrl}" target="_blank" rel="noopener noreferrer">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+          ${t('viewOriginal')}
+        </a>
+      </div>`;
     }
-    
-    playerHtml += `
-        </div>
-      </div>
-    `;
-    
-    return playerHtml;
+
+    html += '</div></div>';
+    return html;
   }
-  
-  // 加载 Twitter 视频
+
   async function loadTwitterVideo(tweetId, container) {
     try {
       const response = await fetch(`https://api.vxtwitter.com/i/status/${tweetId}`);
-      
-      if (!response.ok) {
-        throw new Error('Failed to fetch tweet data');
-      }
-      
+      if (!response.ok) throw new Error('Failed to fetch');
       const data = await response.json();
-      
-      // 检查是否有视频
-      if (!data.media_extended || data.media_extended.length === 0) {
-        throw new Error('No media found in tweet');
-      }
-      
-      // 查找视频
-      const videoMedia = data.media_extended.find(m => m.type === 'video' || m.type === 'gif');
-      
-      if (!videoMedia || !videoMedia.url) {
-        throw new Error('No video found in tweet');
-      }
-      
-      // 创建 HTML5 video 播放器
-      const height = settings.video_height;
-      const borderRadius = settings.border_radius;
-      
-      const videoHtml = `
-        <div class="video-embed-player" style="border-radius: ${borderRadius}px; overflow: hidden;">
-          <video
-            controls
-            width="100%"
-            height="${height}"
-            style="display: block; background: #000;"
-            poster="${videoMedia.thumbnail_url || ''}"
-          >
-            <source src="${videoMedia.url}" type="video/mp4">
-            您的浏览器不支持 HTML5 视频播放。
-          </video>
-          ${data.text ? `
-            <div class="video-embed-caption">
-              <p>${escapeHtml(data.text)}</p>
-              <small>— @${data.user_screen_name}</small>
-            </div>
-          ` : ''}
-        </div>
-      `;
-      
-      container.innerHTML = videoHtml;
-    } catch (error) {
-      console.error('[Video Embed] Failed to load Twitter video:', error);
+
+      if (!data.media_extended || data.media_extended.length === 0) throw new Error('No media');
+      const video = data.media_extended.find(m => m.type === 'video' || m.type === 'gif');
+      if (!video || !video.url) throw new Error('No video');
+
+      const radius = settings.border_radius;
       container.innerHTML = `
-        <div class="video-embed-error">
-          <p>❌ 无法加载视频</p>
-          <small>${error.message}</small>
-        </div>
-      `;
+        <div class="ve-player" style="border-radius: ${radius}px;">
+          <video controls width="100%" style="display:block; background:#000;" poster="${video.thumbnail_url || ''}">
+            <source src="${video.url}" type="video/mp4">
+            ${t('unsupported')}
+          </video>
+          ${data.text ? `<div class="ve-caption"><p>${escapeHtml(data.text)}</p><small>— @${data.user_screen_name}</small></div>` : ''}
+        </div>`;
+    } catch (error) {
+      container.innerHTML = `<div class="ve-error"><p>${t('error')}</p><small>${error.message}</small></div>`;
     }
   }
-  
-  // HTML 转义
+
   function escapeHtml(text) {
     const div = document.createElement('div');
     div.textContent = text;
     return div.innerHTML;
   }
-  
-  // 预处理：隐藏即将被替换的 URL（减少闪烁）
-  function preProcessUrls() {
-    const contentSelectors = [
-      '.post-content',
-      '.prose',
-      '.article-content'
-    ];
-    
-    let contentElement = null;
-    for (const selector of contentSelectors) {
-      contentElement = document.querySelector(selector);
-      if (contentElement) break;
-    }
-    
-    if (!contentElement) return;
-    
-    const paragraphs = contentElement.querySelectorAll('p');
-    paragraphs.forEach(p => {
-      const text = p.textContent.trim();
-      
-      // 检查是否是视频 URL
-      for (const [platformKey, platformConfig] of Object.entries(platforms)) {
-        if (!platformConfig.enabled()) continue;
-        
-        const match = text.match(platformConfig.regex);
-        if (match && text.startsWith('http')) {
-          // 添加一个临时类，稍微降低透明度
-          p.style.opacity = '0.3';
-          p.style.transition = 'opacity 0.2s';
-          p.setAttribute('data-video-url', 'pending');
-          break;
-        }
-      }
-    });
-  }
-  
-  // 处理文章内容中的视频链接
+
   function processVideoLinks() {
-    if (!settings.auto_replace_links) {
-      return;
+    if (!settings.auto_replace_links) return;
+
+    const contentSelectors = ['.post-content', '.prose', '.article-content', 'article .content', 'main article', '.markdown-body', '.content', 'article'];
+    let contentEl = null;
+    for (const sel of contentSelectors) {
+      contentEl = document.querySelector(sel);
+      if (contentEl) break;
     }
-    
-    // 查找文章内容容器
-    const contentSelectors = [
-      '.post-content',
-      '.prose',
-      '.article-content',
-      'article .content',
-      'main article',
-      '.markdown-body',
-      '.content',
-      'article'
-    ];
-    
-    let contentElement = null;
-    for (const selector of contentSelectors) {
-      contentElement = document.querySelector(selector);
-      if (contentElement) break;
-    }
-    
-    if (!contentElement) {
-      return;
-    }
-    
-    // 方法 1: 处理 <a> 标签
-    const links = contentElement.querySelectorAll('a[href]');
-    
-    links.forEach(link => {
-      const url = link.href;
-      processUrl(url, link, link.parentElement);
+    if (!contentEl) return;
+
+    // Process <a> tags
+    contentEl.querySelectorAll('a[href]').forEach(link => {
+      processUrl(link.href, link, link.parentElement);
     });
-    
-    // 方法 2: 处理纯文本 URL（在段落中查找）
-    const paragraphs = contentElement.querySelectorAll('p');
-    
-    paragraphs.forEach((p) => {
-      // 跳过已经处理过的段落
-      if (p.querySelector('.video-embed-container')) {
-        return;
-      }
-      
+
+    // Process plain-text URLs in paragraphs
+    contentEl.querySelectorAll('p').forEach(p => {
+      if (p.querySelector('.ve-container')) return;
       const text = p.textContent.trim();
-      
-      // 检查段落是否只包含一个 URL
-      for (const [platformKey, platformConfig] of Object.entries(platforms)) {
-        if (!platformConfig.enabled()) {
-          continue;
-        }
-        
-        const match = text.match(platformConfig.regex);
+
+      for (const [key, cfg] of Object.entries(platforms)) {
+        if (!cfg.enabled()) continue;
+        const match = text.match(cfg.regex);
         if (match && match[1]) {
-          const videoId = match[1];
-          const url = match[0];
-          
-          // 确保整个段落就是这个 URL（允许前后有少量空白）
           const cleanText = text.replace(/\s+/g, '');
-          const cleanUrl = url.replace(/\s+/g, '');
-          
-          if (text === url || cleanText === cleanUrl || text.startsWith('http')) {
-            // 创建播放器
-            const playerHtml = createVideoPlayer(platformKey, videoId, url);
+          const cleanUrl = match[0].replace(/\s+/g, '');
+          if (text === match[0] || cleanText === cleanUrl || text.startsWith('http')) {
             const wrapper = document.createElement('div');
-            wrapper.innerHTML = playerHtml;
-            
-            // 替换段落
+            wrapper.innerHTML = createVideoPlayer(key, match[1], match[0]);
             p.replaceWith(wrapper.firstElementChild);
-            
-            // 如果是 Twitter，异步加载视频
-            if (platformKey === 'twitter') {
-              const loadingContainer = wrapper.querySelector('.video-embed-loading');
-              if (loadingContainer) {
-                loadTwitterVideo(videoId, loadingContainer);
-              }
+            if (key === 'twitter') {
+              const loadingEl = wrapper.querySelector('.ve-loading');
+              if (loadingEl) loadTwitterVideo(match[1], loadingEl);
             }
-            
             break;
           }
         }
       }
     });
   }
-  
-  // 处理单个 URL
+
   function processUrl(url, element, parent) {
-    // 检查每个平台
-    for (const [platformKey, platformConfig] of Object.entries(platforms)) {
-      if (!platformConfig.enabled()) {
-        continue;
-      }
-      
-      const match = url.match(platformConfig.regex);
+    for (const [key, cfg] of Object.entries(platforms)) {
+      if (!cfg.enabled()) continue;
+      const match = url.match(cfg.regex);
       if (match && match[1]) {
-        const videoId = match[1];
-        
-        // 检查链接是否是独立的段落
-        const isStandalone = parent && (
-          parent.tagName === 'P' && 
-          parent.textContent.trim() === element.textContent.trim()
-        );
-        
-        const shouldReplace = isStandalone || 
-                              element.textContent === url || 
-                              element.textContent.includes(videoId);
-        
-        if (shouldReplace) {
-          // 创建播放器
-          const playerHtml = createVideoPlayer(platformKey, videoId, url);
+        const isStandalone = parent && parent.tagName === 'P' && parent.textContent.trim() === element.textContent.trim();
+        if (isStandalone || element.textContent === url || element.textContent.includes(match[1])) {
           const wrapper = document.createElement('div');
-          wrapper.innerHTML = playerHtml;
-          
-          // 替换链接所在的段落
-          if (parent && parent.tagName === 'P') {
-            parent.replaceWith(wrapper.firstElementChild);
-          } else {
-            element.replaceWith(wrapper.firstElementChild);
+          wrapper.innerHTML = createVideoPlayer(key, match[1], url);
+          if (parent && parent.tagName === 'P') parent.replaceWith(wrapper.firstElementChild);
+          else element.replaceWith(wrapper.firstElementChild);
+          if (key === 'twitter') {
+            const loadingEl = wrapper.querySelector('.ve-loading');
+            if (loadingEl) loadTwitterVideo(match[1], loadingEl);
           }
-          
-          // 如果是 Twitter，异步加载视频
-          if (platformKey === 'twitter') {
-            const loadingContainer = wrapper.querySelector('.video-embed-loading');
-            if (loadingContainer) {
-              loadTwitterVideo(videoId, loadingContainer);
-            }
-          }
-          
           break;
         }
       }
     }
   }
-  
-  // 加载插件设置
-  async function loadSettings() {
-    try {
-      // 检查是否有模拟设置（用于测试）
-      if (window.mockPluginSettings) {
-        settings = { ...DEFAULT_SETTINGS, ...window.mockPluginSettings };
-        return;
-      }
-      
-      const response = await fetch('/api/v1/plugins/enabled');
-      const plugins = await response.json();
-      const plugin = plugins.find(p => p.id === PLUGIN_ID);
-      
-      if (plugin && plugin.settings) {
-        settings = { ...DEFAULT_SETTINGS, ...plugin.settings };
-      }
-    } catch (error) {
-      console.error('[Video Embed] Failed to load settings:', error);
-    }
-  }
-  
-  // 处理内容（检查页面类型、查找容器、调用 processVideoLinks）
+
   function processContent() {
-    const isArticlePage = window.location.pathname.includes('/posts/') || 
-                          document.querySelector('article') !== null;
-    if (!isArticlePage) return;
-    
-    const contentElement = document.querySelector('.post-content, .prose, .article-content');
-    if (!contentElement || contentElement.children.length === 0) return;
-    
-    if (contentElement.getAttribute('data-video-processed') === window.location.pathname) return;
-    
+    const isArticle = window.location.pathname.includes('/posts/') || document.querySelector('article');
+    if (!isArticle) return;
+    const el = document.querySelector('.post-content, .prose, .article-content');
+    if (!el || el.children.length === 0) return;
+    if (el.getAttribute('data-ve-done') === window.location.pathname) return;
     processVideoLinks();
-    contentElement.setAttribute('data-video-processed', window.location.pathname);
+    el.setAttribute('data-ve-done', window.location.pathname);
   }
-  
-  // 初始化
+
   async function init() {
-    // 1. 先注册 hook（不等 settings），这样不会错过任何 content_render 触发
-    //    即使 settings 还没加载完，processContent 也会用 DEFAULT_SETTINGS 工作
     const registerHook = () => {
       if (window.Noteva && window.Noteva.hooks) {
-        window.Noteva.hooks.on('content_render', () => {
-          document.querySelectorAll('[data-video-processed]').forEach(el => {
-            el.removeAttribute('data-video-processed');
-          });
+        // Load settings from SDK
+        const pluginSettings = Noteva.plugins.getSettings(PLUGIN_ID);
+        if (pluginSettings && Object.keys(pluginSettings).length > 0) {
+          settings = { ...DEFAULT_SETTINGS, ...pluginSettings };
+        }
+
+        Noteva.hooks.on('content_render', () => {
+          document.querySelectorAll('[data-ve-done]').forEach(el => el.removeAttribute('data-ve-done'));
           processContent();
         });
       } else {
@@ -408,46 +241,30 @@
       }
     };
     registerHook();
-    
-    // 2. 然后异步加载设置
-    await loadSettings();
-    
-    // 3. 设置加载完成后，清除标记并重新处理（用真实设置替换默认设置的结果）
-    document.querySelectorAll('[data-video-processed]').forEach(el => {
-      el.removeAttribute('data-video-processed');
-    });
-    
-    // 首次加载处理
+
+    // Initial load
     if (document.readyState === 'complete' || document.readyState === 'interactive') {
-      preProcessUrls();
       setTimeout(processContent, 100);
     } else {
-      document.addEventListener('DOMContentLoaded', () => {
-        preProcessUrls();
-        setTimeout(processContent, 100);
-      });
+      document.addEventListener('DOMContentLoaded', () => setTimeout(processContent, 100));
     }
-    
-    // MutationObserver 兜底：监听 SPA 路由变化和内容动态加载
+
+    // MutationObserver for SPA
     let lastPath = window.location.pathname;
     const observer = new MutationObserver(() => {
-      // 路由变化时清除标记
       if (window.location.pathname !== lastPath) {
         lastPath = window.location.pathname;
-        document.querySelectorAll('[data-video-processed]').forEach(el => {
-          el.removeAttribute('data-video-processed');
-        });
+        document.querySelectorAll('[data-ve-done]').forEach(el => el.removeAttribute('data-ve-done'));
       }
-      const contentElement = document.querySelector('.post-content, .prose, .article-content');
-      if (contentElement && contentElement.children.length > 0 && 
-          contentElement.getAttribute('data-video-processed') !== window.location.pathname) {
+      const el = document.querySelector('.post-content, .prose, .article-content');
+      if (el && el.children.length > 0 && el.getAttribute('data-ve-done') !== window.location.pathname) {
         processContent();
       }
     });
-    
-    observer.observe(document.body, { childList: true, subtree: true });
+
+    if (document.body) observer.observe(document.body, { childList: true, subtree: true });
+    else document.addEventListener('DOMContentLoaded', () => observer.observe(document.body, { childList: true, subtree: true }));
   }
-  
-  // 启动插件
+
   init();
 })();

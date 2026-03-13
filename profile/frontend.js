@@ -1,175 +1,138 @@
-(function() {
+(function () {
   'use strict';
-  
   const PLUGIN_ID = 'profile';
-  
-  // 获取当前页面的 slug
+
+  const I18N = {
+    'zh-CN': { skills: '技能', yourName: 'Your Name' },
+    'zh-TW': { skills: '技能', yourName: 'Your Name' },
+    'en': { skills: 'Skills', yourName: 'Your Name' },
+  };
+
+  function getLocale() {
+    try {
+      const stored = JSON.parse(localStorage.getItem('noteva-locale') || '{}');
+      if (stored.state?.locale) return stored.state.locale;
+    } catch (e) { }
+    if (typeof Noteva !== 'undefined' && Noteva.i18n) return Noteva.i18n.getLocale();
+    return 'zh-CN';
+  }
+
+  function t(key) {
+    const locale = getLocale();
+    const lang = locale.split('-')[0];
+    const msgs = I18N[locale] || I18N[lang] || I18N['zh-CN'];
+    return msgs[key] || key;
+  }
+
+  // SVG social icons
+  const SOCIAL_ICONS = {
+    email: '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="M22 7l-10 7L2 7"/></svg>',
+    github: '<svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M12 .3a12 12 0 00-3.8 23.4c.6.1.8-.3.8-.6v-2c-3.3.7-4-1.6-4-1.6-.5-1.4-1.3-1.8-1.3-1.8-1-.7.1-.7.1-.7 1.2.1 1.8 1.2 1.8 1.2 1 1.8 2.8 1.3 3.5 1 .1-.8.4-1.3.7-1.6-2.7-.3-5.5-1.3-5.5-6 0-1.2.5-2.3 1.2-3.1-.1-.3-.5-1.5.1-3.2 0 0 1-.3 3.4 1.2a11.5 11.5 0 016 0c2.3-1.5 3.3-1.2 3.3-1.2.7 1.7.3 2.9.1 3.2.8.8 1.2 1.9 1.2 3.1 0 4.6-2.8 5.6-5.5 5.9.4.4.8 1.1.8 2.2v3.3c0 .3.2.7.8.6A12 12 0 0012 .3z"/></svg>',
+    twitter: '<svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>',
+    website: '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 014 10 15.3 15.3 0 01-4 10 15.3 15.3 0 01-4-10 15.3 15.3 0 014-10z"/></svg>',
+    linkedin: '<svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M20.5 2h-17A1.5 1.5 0 002 3.5v17A1.5 1.5 0 003.5 22h17a1.5 1.5 0 001.5-1.5v-17A1.5 1.5 0 0020.5 2zM8 19H5v-9h3zM6.5 8.25A1.75 1.75 0 118.3 6.5a1.78 1.78 0 01-1.8 1.75zM19 19h-3v-4.74c0-1.42-.6-1.93-1.38-1.93A1.74 1.74 0 0013 14.19V19h-3v-9h2.9v1.3a3.11 3.11 0 012.7-1.4c1.55 0 3.36.86 3.36 3.66z"/></svg>',
+    location: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>',
+  };
+
   function getCurrentSlug() {
-    const path = window.location.pathname;
-    const match = path.match(/\/([^\/]+)\/?$/);
+    const match = window.location.pathname.match(/\/([^\/]+)\/?$/);
     return match ? match[1] : '';
   }
-  
-  // 渲染社交链接图标
-  function getSocialIcon(platform) {
-    const icons = {
-      email: '✉️',
-      github: '🐙',
-      twitter: '🐦',
-      website: '🌐',
-      linkedin: '💼'
-    };
-    return icons[platform] || '🔗';
-  }
-  
-  // 渲染个人主页
+
   function renderProfile(settings) {
     const { avatar, name, title, bio, location, email, github, twitter, website, linkedin, skills_data, show_skills } = settings;
-    // 处理技能数据：可能是字符串数组或对象数组
+
     let skills = [];
     if (Array.isArray(skills_data)) {
-      skills = skills_data.map(item => {
-        if (typeof item === 'string') {
-          return item;
-        } else if (item && item.skill) {
-          return item.skill;
-        }
-        return '';
-      }).filter(s => s);
+      skills = skills_data.map(item => typeof item === 'string' ? item : item?.skill || '').filter(Boolean);
     }
-    
-    let html = `
-      <div class="profile-container">
-        <div class="profile-header">
-          ${avatar ? `
-            <div class="profile-avatar">
-              <img src="${avatar}" alt="${name || 'Avatar'}">
-            </div>
-          ` : ''}
-          <div class="profile-info">
-            <h1 class="profile-name">${name || 'Your Name'}</h1>
-            ${title ? `<p class="profile-title">${title}</p>` : ''}
-            ${location ? `<p class="profile-location">📍 ${location}</p>` : ''}
-          </div>
-        </div>
-        
-        ${bio ? `
-          <div class="profile-bio">
-            <p>${bio.replace(/\n/g, '<br>')}</p>
-          </div>
-        ` : ''}
-        
-        <div class="profile-social">
-    `;
-    
-    // 添加社交链接
+
     const socialLinks = [];
-    if (email) socialLinks.push({ platform: 'email', url: `mailto:${email}`, label: 'Email' });
-    if (github) socialLinks.push({ platform: 'github', url: `https://github.com/${github}`, label: 'GitHub' });
-    if (twitter) socialLinks.push({ platform: 'twitter', url: `https://twitter.com/${twitter}`, label: 'Twitter' });
-    if (website) socialLinks.push({ platform: 'website', url: website, label: 'Website' });
-    if (linkedin) socialLinks.push({ platform: 'linkedin', url: `https://linkedin.com/in/${linkedin}`, label: 'LinkedIn' });
-    
-    socialLinks.forEach(link => {
-      html += `
-        <a href="${link.url}" target="_blank" rel="noopener noreferrer" class="social-link">
-          <span class="social-icon">${getSocialIcon(link.platform)}</span>
-          <span class="social-label">${link.label}</span>
-        </a>
-      `;
-    });
-    
-    html += '</div>';
-    
-    // 添加技能标签
-    if (show_skills && skills.length > 0) {
-      html += `
-        <div class="profile-skills">
-          <h2 class="skills-title">技能</h2>
-          <div class="skills-tags">
-      `;
-      
-      skills.forEach(skill => {
-        html += `<span class="skill-tag">${skill}</span>`;
-      });
-      
-      html += `
-          </div>
+    if (email) socialLinks.push({ icon: SOCIAL_ICONS.email, url: `mailto:${email}`, label: 'Email' });
+    if (github) socialLinks.push({ icon: SOCIAL_ICONS.github, url: `https://github.com/${github}`, label: 'GitHub' });
+    if (twitter) socialLinks.push({ icon: SOCIAL_ICONS.twitter, url: `https://twitter.com/${twitter}`, label: 'X' });
+    if (website) socialLinks.push({ icon: SOCIAL_ICONS.website, url: website, label: 'Website' });
+    if (linkedin) socialLinks.push({ icon: SOCIAL_ICONS.linkedin, url: `https://linkedin.com/in/${linkedin}`, label: 'LinkedIn' });
+
+    let html = `<div class="pf-container">
+      <div class="pf-header">
+        ${avatar ? `<div class="pf-avatar"><img src="${avatar}" alt="${name || ''}"></div>` : ''}
+        <div class="pf-info">
+          <h1 class="pf-name">${name || t('yourName')}</h1>
+          ${title ? `<p class="pf-title">${title}</p>` : ''}
+          ${location ? `<p class="pf-location">${SOCIAL_ICONS.location} ${location}</p>` : ''}
         </div>
-      `;
+      </div>
+      ${bio ? `<div class="pf-bio"><p>${bio.replace(/\n/g, '<br>')}</p></div>` : ''}
+      ${socialLinks.length ? `<div class="pf-social">
+        ${socialLinks.map(l => `<a href="${l.url}" target="_blank" rel="noopener noreferrer" class="pf-social-link">
+          <span class="pf-social-icon">${l.icon}</span>
+          <span class="pf-social-label">${l.label}</span>
+        </a>`).join('')}
+      </div>` : ''}`;
+
+    if (show_skills && skills.length > 0) {
+      html += `<div class="pf-skills">
+        <h2 class="pf-skills-title">${t('skills')}</h2>
+        <div class="pf-skills-tags">${skills.map(s => `<span class="pf-skill">${s}</span>`).join('')}</div>
+      </div>`;
     }
-    
-    html += '</div>';
-    
-    return html;
+
+    return html + '</div>';
   }
-  
-  // 初始化
+
   async function init() {
     try {
-      // 获取插件设置
-      const response = await fetch('/api/v1/plugins/enabled');
-      const plugins = await response.json();
-      const plugin = plugins.find(p => p.id === PLUGIN_ID);
-      
-      if (!plugin || !plugin.settings) {
-        return;
+      let settings;
+      if (typeof Noteva !== 'undefined' && Noteva.plugins) {
+        settings = Noteva.plugins.getSettings(PLUGIN_ID);
       }
-      
-      const settings = plugin.settings;
+      if (!settings || Object.keys(settings).length === 0) {
+        const response = await fetch('/api/v1/plugins/enabled');
+        const plugins = await response.json();
+        const plugin = plugins.find(p => p.id === PLUGIN_ID);
+        if (!plugin || !plugin.settings) return;
+        settings = plugin.settings;
+      }
+
       const targetSlug = settings.target_slug || 'about';
-      const currentSlug = getCurrentSlug();
-      
-      // 检查是否匹配目标页面
-      if (currentSlug === targetSlug) {
-        // 等待页面内容加载
-        const tryRender = () => {
-          const contentElement = document.querySelector('.page-content, .prose, article, main');
-          if (contentElement) {
-            // 避免重复渲染
-            if (contentElement.querySelector('.profile-container')) return;
-            // 清空并替换页面内容
-            while (contentElement.firstChild) {
-              contentElement.removeChild(contentElement.firstChild);
-            }
-            const wrapper = document.createElement('div');
-            wrapper.innerHTML = renderProfile(settings);
-            contentElement.appendChild(wrapper);
-          }
-        };
-        setTimeout(tryRender, 100);
-      }
-    } catch (error) {
-      console.error('[Profile Plugin] Error:', error);
+      if (getCurrentSlug() !== targetSlug) return;
+
+      const tryRender = () => {
+        const el = document.querySelector('.page-content, .prose, article, main');
+        if (!el || el.querySelector('.pf-container')) return;
+        while (el.firstChild) el.removeChild(el.firstChild);
+        const wrapper = document.createElement('div');
+        wrapper.innerHTML = renderProfile(settings);
+        el.appendChild(wrapper);
+      };
+      setTimeout(tryRender, 100);
+    } catch (e) {
+      console.error('[Profile]', e);
     }
   }
-  
-  // 页面加载完成后初始化
+
   if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', () => setTimeout(init, 200));
   } else {
     setTimeout(init, 200);
   }
-  
-  // SPA 路由切换时重新初始化
+
   function registerHook() {
     if (typeof Noteva !== 'undefined' && Noteva.hooks) {
-      Noteva.hooks.on('content_render', () => {
-        setTimeout(init, 100);
-      });
+      Noteva.hooks.on('content_render', () => setTimeout(init, 100));
     } else {
       setTimeout(registerHook, 200);
     }
   }
   registerHook();
 
-  // MutationObserver 兜底：监听 SPA 内容动态加载
   let lastPath = window.location.pathname;
-  const observer = new MutationObserver(() => {
+  const obs = new MutationObserver(() => {
     if (window.location.pathname !== lastPath) {
       lastPath = window.location.pathname;
       setTimeout(init, 200);
     }
   });
-  observer.observe(document.body, { childList: true, subtree: true });
+  if (document.body) obs.observe(document.body, { childList: true, subtree: true });
 })();
